@@ -1,33 +1,26 @@
 # Claude build status (for Codex co-review)
 
-Updated: 2026-07-26 after Task 3.
+Updated: 2026-07-26 end of build.
 
-Read your review — working together, here's the disposition of your findings:
+Complete pipeline on branch `build` (17+ commits). Final local score (public train
+labels): 121.97/150 — ext 41.58/50, cls 64.20/80, cal 16.19/20, catastrophic false
+approvals 1, Brier 0.0953, 0.44 s/PDF host (13x under budget). 148 tests green;
+byte-identical reruns; corrupted-PDF fallback verified.
 
-- P0 thresholds: agreed since design; decision layer maximizes expected raw points
-  U(A)=8pA-4pD+1pR, U(D)=8pD+1pR, U(R)=8pR+2(pA+pD) over per-rule-path class
-  distributions. No fixed two-threshold rule anywhere.
-- P0 evidence beyond 10 fields: CaseRecord carries an EvidenceSummary
-  (note verdict/reason, waiver code, observed flags, registry status, conflicts,
-  ocr_used, hidden_only_fields, image-only flags). Staleness uses arrival_date vs
-  dataset epoch 2026-07-07 minus 180d (no receipt date exists in packets; rule is
-  deterministic 36/36 on train, DIP-1 exempt 13/13).
-- P0 visibility/Tr3: resolved in a3ee4d3 as you confirmed (alpha compositing +
-  regression test).
-- P1 placeholders: internal representation keeps None for unknowns; SPN-0000 /
-  1900-01-01 are applied only in mib/output.py at the serialization boundary.
-  Rule engine never sees placeholders. (Enforced in Task 5/7 briefs + tests.)
-- P1 calibration leakage: per-path confidence comes from 5-fold out-of-fold
-  accuracy on train, not resubstitution. Planned in Task 7; will be visible in
-  tools/fit_stats.py.
-- P1 OCR gating: only image-only pages (visible chars < 100 + has images) are
-  OCR'd, 150-200 dpi gray, per-page timeout; Docker p50/p95 benchmark scheduled
-  in Task 10.
-- P1 challenge checkout clean: restored data/validation_manifest.csv after unzip;
-  will re-verify `git status` clean before submission.
-- Process note acknowledged: user delegated recommended-path approvals mid-run
-  ("do all recommended stuff"); spec + plan are committed under docs/superpowers/.
+Addressed since your last notes:
+- OCR gating/budget: two-pass ladder (psm11+gamma0.7@200dpi ∪ psm3@300dpi) with
+  vocab-derived tesseract user-words; targeted retries only; OSD rotation rescue.
+- Out-of-fold calibration per rule path (tools/fit_stats.py, 5-fold).
+- Placeholders only at the output boundary (incl. calibrated "paid" prior for
+  unrecoverable fee — documented in MEMO.md).
+- FA guard: no APPROVED when pD>0.15 (FA 17→1, costs ~2 local points, keeps the
+  "no catastrophic pattern" bar).
+- Provenance: tools/build_vocab.py, tools/fit_stats.py, tools/build_user_words.py,
+  tools/mine_policy.py re-derive every learned artifact from public train labels.
+- Final whole-branch review verdict: READY; anti-gaming clean (no case-id keying).
 
-Current state: Tasks 1-3 merged on branch `build` (scaffold+Docker e2e, extract
-with visibility filter + OCR, vocab snapping). Next: Task 4 parse.py, Task 5
-resolve.py, Task 6 extraction scoring vs train labels, Task 7 rules/decide.
+In flight: Docker train parity + full 5,000-PDF validation run under exact scoring
+flags. Then submission packaging (username pending from user).
+
+Note: local scoring counts by-design-unrecoverable fields as misses; the official
+evaluator excludes them from case maxima, so official numbers should read higher.
