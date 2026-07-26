@@ -6,3 +6,5 @@ __pycache__/
 .DS_Store
 docker_out/
 submission_out/
+config.bat
+node_modules
