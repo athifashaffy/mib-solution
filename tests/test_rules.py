@@ -174,14 +174,14 @@ def test_clean_case_gets_empirical_path():
     rec = make_record()
     rp = path_of(rec)
     assert rp.dist is None
-    assert rp.path_id == "flags:none;fee:paid;visa:std;q:t;m0;b0;g0"
+    assert rp.path_id == "flags:none;fee:paid;visa:std;q:t;m0;b0;g0;nt0"
 
 
 def test_review_flags_go_to_empirical_path():
     rec = make_record(risk_flags={"illegible_biometrics"})
     rp = path_of(rec)
     assert rp.dist is None
-    assert rp.path_id == "flags:illegible_biometrics;fee:paid;visa:std;q:t;m0;b0;g0"
+    assert rp.path_id == "flags:illegible_biometrics;fee:paid;visa:std;q:t;m0;b0;g0;nt0"
 
 
 def test_flag_profile_is_sorted_in_path_id():

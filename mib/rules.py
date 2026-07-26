@@ -149,7 +149,12 @@ def _quality_suffix(record) -> str:
     # Destroyed-content pages: a packet with pages too damaged to classify is
     # a different risk class than a genuinely sparse packet.
     g = "g1" if evidence.unknown_content_pages > 0 else "g0"
-    return f"q:{q};{m};{b};{g}"
+    # An adjudicator-note page exists but its Finding sentence didn't survive
+    # OCR: the packet HAS a decision we couldn't read (22 DENIED / 19 REVIEW /
+    # 6 APPROVED on train, n=47) — materially review-leaning.
+    nt = "nt1" if ("note" in evidence.doc_types_seen
+                   and not evidence.note_verdict) else "nt0"
+    return f"q:{q};{m};{b};{g};{nt}"
 
 
 _QUALITY_FIELDS = (
