@@ -62,6 +62,23 @@ The pipeline treats the task as evidence engineering, not answer extraction.
    byte-identical across runs, verified by `cmp`). ~0.4 s/PDF against the
    6 s budget.
 
+### Task 11 update (same day)
+
+A residual-mining pass (tools/residuals.py, single-field counterfactuals) drove four
+further changes: a registry-status EMBARGO REVIEW rule path (30/2/0 on train), a
+destroyed-content-page evidence feature, TSV anchor-crop re-OCR (label located via
+word boxes, value re-OCR'd from a tight high-DPI crop -- rendering pixels, so hidden
+text stays invisible by construction), and an unread-adjudicator-note path feature
+(a packet with a note we could not read is review-leaning, 22/19/6). Local score
+moved 121.97 -> 122.27 with catastrophic false approvals at 2; an FA-guard sweep
+confirmed pD<=0.15 as the operating point (0.20 buys +0.74 points at 15 false
+approvals -- rejected). The dominant remaining residual is evidence that is absent
+by design: flags with no visible source anywhere in the packet (verified by manual
+page renders; the value exists only inside the untrusted hidden-text answer key,
+which this pipeline deliberately never reads) and fee statuses whose receipt page
+does not exist. The official evaluator's unrecoverable-field handling excludes much
+of that class from scoring, so official numbers should read above local ones.
+
 ## Results (local, public train labels)
 
 ```
