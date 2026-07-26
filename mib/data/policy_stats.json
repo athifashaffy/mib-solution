@@ -2,11 +2,11 @@
   "disq": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.006711,
-      0.986577,
-      0.006711
+      0.006803,
+      0.986395,
+      0.006803
     ],
-    "n": 73
+    "n": 72
   },
   "feeunk": {
     "decided_label_cv_accuracy": 0.965517,
@@ -36,13 +36,13 @@
     "n": 1
   },
   "flags:identity_conflict;fee:missing;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 0.571429,
+    "decided_label_cv_accuracy": 0.5,
     "dist": [
-      0.294118,
-      0.176471,
-      0.529412
+      0.333333,
+      0.2,
+      0.466667
     ],
-    "n": 7
+    "n": 6
   },
   "flags:identity_conflict;fee:missing;visa:std;q:u;m1": {
     "decided_label_cv_accuracy": 0.0,
@@ -54,13 +54,13 @@
     "n": 1
   },
   "flags:identity_conflict;fee:paid;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 0.0,
+    "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.428571,
-      0.142857,
-      0.428571
+      0.2,
+      0.2,
+      0.6
     ],
-    "n": 2
+    "n": 1
   },
   "flags:identity_conflict;fee:paid;visa:dip;q:t;m0": {
     "decided_label_cv_accuracy": 1.0,
@@ -72,13 +72,13 @@
     "n": 3
   },
   "flags:identity_conflict;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.75,
+    "decided_label_cv_accuracy": 0.8,
     "dist": [
-      0.090909,
-      0.272727,
-      0.636364
+      0.076923,
+      0.230769,
+      0.692308
     ],
-    "n": 4
+    "n": 5
   },
   "flags:identity_conflict;fee:paid;visa:std;q:t;m0": {
     "decided_label_cv_accuracy": 1.0,
@@ -225,13 +225,13 @@
     "n": 1
   },
   "flags:none;fee:missing;visa:dip;q:o;m1": {
-    "decided_label_cv_accuracy": 0.263158,
+    "decided_label_cv_accuracy": 0.388889,
     "dist": [
-      0.560976,
-      0.219512,
-      0.219512
+      0.589744,
+      0.230769,
+      0.179487
     ],
-    "n": 19
+    "n": 18
   },
   "flags:none;fee:missing;visa:dip;q:o;m2": {
     "decided_label_cv_accuracy": 0.222222,
@@ -324,13 +324,13 @@
     "n": 2
   },
   "flags:none;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.588235,
+    "decided_label_cv_accuracy": 0.59375,
     "dist": [
-      0.577465,
-      0.239437,
-      0.183099
+      0.58209,
+      0.253731,
+      0.164179
     ],
-    "n": 34
+    "n": 32
   },
   "flags:none;fee:paid;visa:std;q:o;m1": {
     "decided_label_cv_accuracy": 0.2,
@@ -360,13 +360,13 @@
     "n": 4
   },
   "flags:none;fee:waived;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 0.4,
+    "decided_label_cv_accuracy": 0.222222,
     "dist": [
-      0.478261,
-      0.130435,
-      0.391304
+      0.52381,
+      0.142857,
+      0.333333
     ],
-    "n": 10
+    "n": 9
   },
   "flags:none;fee:waived;visa:dip;q:o;m2": {
     "decided_label_cv_accuracy": 0.0,
@@ -476,15 +476,6 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.0,
-    "dist": [
-      0.6,
-      0.2,
-      0.2
-    ],
-    "n": 1
-  },
   "flags:sponsor_mismatch;fee:waived;visa:std;q:o;m0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
@@ -495,13 +486,13 @@
     "n": 1
   },
   "nodate-hidden": {
-    "decided_label_cv_accuracy": 0.428571,
+    "decided_label_cv_accuracy": 0.407407,
     "dist": [
-      0.186441,
-      0.389831,
-      0.423729
+      0.192982,
+      0.403509,
+      0.403509
     ],
-    "n": 28
+    "n": 27
   },
   "nodate;q:o;m1": {
     "decided_label_cv_accuracy": 0.666667,
@@ -513,13 +504,13 @@
     "n": 3
   },
   "nodate;q:o;m2": {
-    "decided_label_cv_accuracy": 0.375,
+    "decided_label_cv_accuracy": 0.409091,
     "dist": [
-      0.411765,
-      0.215686,
-      0.372549
+      0.404255,
+      0.191489,
+      0.404255
     ],
-    "n": 24
+    "n": 22
   },
   "nodate;q:u;m2": {
     "decided_label_cv_accuracy": 0.5,
@@ -540,13 +531,13 @@
     "n": 1
   },
   "nosponsor;q:o;m2": {
-    "decided_label_cv_accuracy": 0.261538,
+    "decided_label_cv_accuracy": 0.268293,
     "dist": [
-      0.30038,
-      0.414449,
-      0.285171
+      0.301205,
+      0.413655,
+      0.285141
     ],
-    "n": 130
+    "n": 123
   },
   "nosponsor;q:u;m2": {
     "decided_label_cv_accuracy": 0.4,
@@ -560,38 +551,38 @@
   "note:APPROVED": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.979381,
-      0.010309,
-      0.010309
+      0.981651,
+      0.009174,
+      0.009174
     ],
-    "n": 47
+    "n": 53
   },
   "note:DENIED": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.004651,
-      0.990698,
-      0.004651
+      0.004405,
+      0.991189,
+      0.004405
     ],
-    "n": 106
+    "n": 112
   },
   "note:NEEDS_REVIEW": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.007299,
-      0.007299,
-      0.985401
+      0.006623,
+      0.006623,
+      0.986755
     ],
-    "n": 67
+    "n": 74
   },
   "revoked": {
-    "decided_label_cv_accuracy": 0.958333,
+    "decided_label_cv_accuracy": 0.978261,
     "dist": [
-      0.030303,
-      0.939394,
-      0.030303
+      0.031579,
+      0.957895,
+      0.010526
     ],
-    "n": 48
+    "n": 46
   },
   "stale": {
     "decided_label_cv_accuracy": 0.947368,

@@ -80,10 +80,47 @@ _BOILERPLATE_LINE_RE = re.compile(
 )
 
 
+# Header phrases eligible for tokenwise fuzzy matching on OCR'd pages
+# (e.g. "Manual Adjudicater Note"). Phrases containing form numbers are
+# excluded: their digit/dash tokens degrade into arbitrary garbage under
+# OCR, so fuzzy-matching them would invite false positives.
+_FUZZY_DOC_TYPE_PHRASES = [
+    ("mib fee receipt", "fee"),
+    ("biometric scan slip", "biometric"),
+    ("sponsor attestation", "sponsor"),
+    ("planetary registry extract", "registry"),
+    ("manual adjudicator note", "note"),
+]
+
+
+def _word_allowed_distance(word: str) -> int:
+    if len(word) < 4:
+        return 0
+    if len(word) < 8:
+        return 1
+    return 2
+
+
+def _fuzzy_phrase_in_words(phrase_words: list[str], header_words: list[str]) -> bool:
+    span = len(phrase_words)
+    for start in range(len(header_words) - span + 1):
+        window = header_words[start:start + span]
+        if all(
+            _levenshtein(w, pw) <= _word_allowed_distance(pw)
+            for w, pw in zip(window, phrase_words)
+        ):
+            return True
+    return False
+
+
 def _detect_doc_type(lines: list[str]) -> str:
     header = "\n".join(lines[:_HEADER_SCAN_LINES]).lower()
     for needle, doc_type in _DOC_TYPE_KEYWORDS:
         if needle in header:
+            return doc_type
+    header_words = re.findall(r"[a-z]+", header)
+    for phrase, doc_type in _FUZZY_DOC_TYPE_PHRASES:
+        if _fuzzy_phrase_in_words(phrase.split(), header_words):
             return doc_type
     for line in lines:
         stripped = line.strip()
@@ -300,7 +337,55 @@ def _normalize_verdict(raw: str) -> str | None:
     return None
 
 
+# OCR can mangle the "Finding"/"Reason" label words themselves ("Firing:",
+# "Fnding;", "Reasen:"). Canonicalize any word-plus-colon/semicolon token
+# within edit distance 2 of a label word back to the canonical label before
+# the Finding regex runs. Only these two label words are ever rewritten,
+# and only when directly followed by ':'/';' — the verdict/reason VALUES
+# are never altered here, and a fabricated verdict still cannot pass
+# `_normalize_verdict`'s distance-<=1 unique-snap gate.
+_LABEL_TOKEN_RE = re.compile(r"\b([A-Za-z]{5,9})([:;])")
+_FUZZY_LABEL_MAX_DISTANCE = 2
+
+
+def _canonicalize_note_labels(flat: str) -> str:
+    def repl(m: re.Match) -> str:
+        word = m.group(1).lower()
+        if _levenshtein(word, "finding") <= _FUZZY_LABEL_MAX_DISTANCE:
+            return "Finding:"
+        if _levenshtein(word, "reason") <= _FUZZY_LABEL_MAX_DISTANCE:
+            return "Reason:"
+        return m.group(0)
+
+    return _LABEL_TOKEN_RE.sub(repl, flat)
+
+
+def has_finding_sentence(text: str) -> bool:
+    """True iff the page text carries a parseable Finding sentence with a
+    valid (snappable) verdict. Used by mib.extract to decide whether a
+    higher-DPI OCR retry recovered an adjudicator note."""
+    flat = _canonicalize_note_labels(_flatten(text or ""))
+    m = _FINDING_RE.search(flat)
+    return bool(m) and _normalize_verdict(m.group(1)) is not None
+
+
+def looks_like_note(text: str) -> bool:
+    """Cheap hint that OCR text is probably a Manual Adjudicator Note page
+    (mangled or not): the 'djudicat' stem survives most OCR damage, or a
+    Finding-like label token is present."""
+    if not text:
+        return False
+    lowered = text.lower()
+    if "djudicat" in lowered:
+        return True
+    for m in _LABEL_TOKEN_RE.finditer(text):
+        if _levenshtein(m.group(1).lower(), "finding") <= _FUZZY_LABEL_MAX_DISTANCE:
+            return True
+    return False
+
+
 def _parse_finding(flat: str, add) -> None:
+    flat = _canonicalize_note_labels(flat)
     m = _FINDING_RE.search(flat)
     if not m:
         return

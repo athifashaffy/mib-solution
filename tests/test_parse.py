@@ -560,3 +560,44 @@ def test_parse_page_returns_pageparse():
     assert isinstance(result, PageParse)
     assert isinstance(result.fields, dict)
     assert isinstance(result.corrections, dict)
+
+
+# --- fuzzy note-label and header recovery (Task 9) ------------------------
+
+
+def test_fuzzy_finding_and_reason_labels_recover_verdict():
+    text = "Manual Adjudicator Note\nFiring: DENIED\nReasen; Denial supported by damaged registry evidence.\n"
+    result = parse_page(text, "ocr")
+    assert result.fields["note_verdict"][0][0] == "DENIED"
+
+
+def test_fuzzy_labels_never_fabricate_verdict_from_decoys():
+    text = "SAMPLE DENIAL\nCOPY ARTIFACT\nPerson: DENIAL because of casework\n"
+    result = parse_page(text, "ocr")
+    assert "note_verdict" not in result.fields
+
+
+def test_fuzzy_header_detects_mangled_adjudicator_note():
+    from mib.parse import parse_page as pp
+    text = "Manual Adjudicater Note\nsome other line\n"
+    assert pp(text, "ocr").doc_type == "note"
+
+
+def test_fuzzy_header_detects_mangled_registry():
+    text = "Planetary Registry Extraet\nRegistry Name: Foo Bar\n"
+    assert parse_page(text, "ocr").doc_type == "registry"
+
+
+def test_has_finding_sentence_helper():
+    from mib.parse import has_finding_sentence
+    assert has_finding_sentence("Finding: DENIED. Reason: x.")
+    assert has_finding_sentence("Firing: DENIED\nReasen; y.")
+    assert not has_finding_sentence("DENIED stamp only, no sentence")
+    assert not has_finding_sentence("Finding: NEMED. Reason: garbage.")
+
+
+def test_looks_like_note_helper():
+    from mib.parse import looks_like_note
+    assert looks_like_note("Manual Adjudicater Note garbled")
+    assert looks_like_note("| Firing: NEMED |")
+    assert not looks_like_note("MIB Fee Receipt\nFee Status: paid")

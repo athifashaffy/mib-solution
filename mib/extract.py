@@ -19,6 +19,8 @@ from pathlib import Path
 
 import fitz
 
+from .parse import has_finding_sentence, looks_like_note
+
 # A span is hidden iff its rendered luminance exceeds this threshold (i.e. it
 # is at or near white and would be invisible against a white page background).
 LUMINANCE_HIDDEN_THRESHOLD = 240
@@ -37,6 +39,11 @@ IMAGE_ONLY_VISIBLE_CHAR_THRESHOLD = 100
 OCR_MIN_CHARS = 50
 
 OCR_DPI = 200
+# Retry DPI for pages that look like adjudicator notes whose Finding
+# sentence didn't survive the first OCR pass. Notes carry the single most
+# decision-relevant sentence in a packet, and the runtime budget has ~28x
+# headroom, so the extra render is cheap where it matters.
+OCR_NOTE_RETRY_DPI = 300
 OCR_TIMEOUT_SECONDS = 20
 
 
@@ -162,15 +169,15 @@ def _run_tesseract(png_path: str, psm: str) -> str:
     return result.stdout or ""
 
 
-def _ocr_page(page: "fitz.Page") -> str:
-    """Render the page at OCR_DPI grayscale and run local tesseract on it.
+def _ocr_at_dpi(page: "fitz.Page", dpi: int) -> str:
+    """Render the page at `dpi` grayscale and run local tesseract on it.
 
     Tries --psm 6 first; if the result has fewer than OCR_MIN_CHARS
     non-whitespace characters, retries with --psm 3 and keeps whichever
     result is longer. Any subprocess failure/timeout yields "" for that
     attempt rather than raising.
     """
-    pix = page.get_pixmap(dpi=OCR_DPI, colorspace=fitz.csGRAY)
+    pix = page.get_pixmap(dpi=dpi, colorspace=fitz.csGRAY)
 
     fd = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
     png_path = fd.name
@@ -185,6 +192,20 @@ def _ocr_page(page: "fitz.Page") -> str:
         return text
     finally:
         Path(png_path).unlink(missing_ok=True)
+
+
+def _ocr_page(page: "fitz.Page") -> str:
+    """First-pass OCR at OCR_DPI, plus one targeted higher-DPI retry for
+    pages that look like adjudicator notes but whose Finding sentence did
+    not survive the first pass. The retry result is adopted only when it
+    actually recovers a parseable Finding sentence — otherwise the first
+    pass stands, so the retry can never make a page worse."""
+    text = _ocr_at_dpi(page, OCR_DPI)
+    if looks_like_note(text) and not has_finding_sentence(text):
+        retry_text = _ocr_at_dpi(page, OCR_NOTE_RETRY_DPI)
+        if has_finding_sentence(retry_text):
+            return retry_text
+    return text
 
 
 def extract_document(pdf_path) -> DocText:
