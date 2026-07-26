@@ -361,3 +361,36 @@ def test_integration_mib_000912_real_pdf():
     assert record.fields["sponsor_id"] == "SPN-4974"
     assert record.fields["species_code"] == "VENUSIAN_MYCELIAL"
     assert record.fields["fee_status"] == "paid"
+
+
+# --- foreign-page gating (multi-applicant packets, Task 9) ----------------
+
+
+def _page(visible="", hidden="", ocr=None, image_only=False):
+    from mib.extract import PageText
+    return PageText(visible=visible, hidden=hidden, ocr=ocr, image_only=image_only)
+
+
+def test_foreign_page_evidence_is_discarded():
+    from mib.extract import DocText
+    doc = DocText(pages=[
+        _page(visible="FORM I-8090: Extraterrestrial Work Authorization Intake\n"
+                      "Case ID\nMIB-000002\nApplicant\nMiraquell Ixovara\n"),
+        _page(visible="Planetary Registry Extract\nRegistry Name\nIxodane Luzarn\n"),
+    ])
+    record = resolve_case(doc, active_case_id="MIB-000001")
+    # The intake page belongs to MIB-000002 -> discarded entirely.
+    assert record.fields["applicant_name"] == "Ixodane Luzarn"
+    assert record.evidence.foreign_pages == 1
+    assert "identity_conflict" not in record.evidence.conflicts
+
+
+def test_own_page_evidence_is_kept():
+    from mib.extract import DocText
+    doc = DocText(pages=[
+        _page(visible="FORM I-8090: Extraterrestrial Work Authorization Intake\n"
+                      "Case ID\nMIB-000001\nApplicant\nMiraquell Ixovara\n"),
+    ])
+    record = resolve_case(doc, active_case_id="MIB-000001")
+    assert record.fields["applicant_name"] == "Miraquell Ixovara"
+    assert record.evidence.foreign_pages == 0

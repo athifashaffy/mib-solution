@@ -58,6 +58,12 @@ class EvidenceSummary:
     # False means the packet's biometric reading is entirely absent, which
     # is a materially different risk situation than a slip that said "none".
     saw_observed_flags: bool = False
+    # Page doc types recognized anywhere in the packet (text or OCR).
+    doc_types_seen: set = field(default_factory=set)
+    # Raw "Biometric confidence" value from the slip (e.g. "86%"), if any.
+    bio_confidence: str | None = None
+    # Pages discarded because their own Case ID belongs to another case.
+    foreign_pages: int = 0
 
 
 @dataclass
@@ -187,6 +193,22 @@ _HIDDEN_PATTERNS = {
 }
 
 
+def _is_foreign_page(page_parse, active_case_id: str | None) -> bool:
+    """A page is foreign iff its own cleanly-read Case ID differs from the
+    packet's active case id. Only an EXACT clean read counts (same rule as
+    conflict detection): an OCR-garbled id must not disqualify a page. The
+    packet footer ("Packet MIB-xxxxxx / page N") always carries the active
+    id, so only the page's labeled Case ID field is consulted."""
+    if not active_case_id:
+        return False
+    for raw, _dt, _source in page_parse.fields.get("case_id", []):
+        normalized = _normalize_case_id(raw)
+        if (normalized is not None and _is_exact_read(raw, normalized)
+                and normalized != active_case_id):
+            return True
+    return False
+
+
 def _hidden_only_fields(doc, resolved_fields: dict) -> set:
     hidden_text = "\n".join(pg.hidden for pg in doc.pages if pg.hidden)
     result = set()
@@ -239,13 +261,25 @@ def _resolve_field(field_name: str, all_fields: dict, corrections: list) -> str 
 
 
 def _first_value_for_doc_type(field_key: str, all_fields: dict, doc_type: str, snap_fn) -> str | None:
+    """First cleanly-read value of `field_key` from pages of `doc_type`.
+
+    Conflict detection intentionally accepts only EXACT reads (the snapped
+    value equals the raw text up to whitespace/case): planted conflicts in
+    these documents are printed cleanly on purpose, while an OCR-garbled
+    name that fuzzy-snaps to a *different* vocabulary entry would fabricate
+    a phantom conflict. Requiring exactness keeps conflict evidence precise
+    without weakening genuine-conflict recall."""
     for raw, dt, _source in all_fields.get(field_key, []):
         if dt != doc_type:
             continue
         snapped = snap_fn(raw)
-        if snapped is not None:
+        if snapped is not None and _is_exact_read(raw, snapped):
             return snapped
     return None
+
+
+def _is_exact_read(raw: str, snapped: str) -> bool:
+    return " ".join(raw.split()).casefold() == " ".join(snapped.split()).casefold()
 
 
 def _detect_conflicts(all_fields: dict) -> set:
@@ -327,7 +361,7 @@ def _is_unreadable_ocr(ocr_text: str | None) -> bool:
 # --- entry point ---------------------------------------------------------------
 
 
-def resolve_case(doc) -> CaseRecord:
+def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
     """Merge every page of `doc` into a single CaseRecord.
 
     Per page: `pg.visible` is always parsed with source="text". If the page
@@ -337,10 +371,18 @@ def resolve_case(doc) -> CaseRecord:
     circumstance -- hidden spans are a prompt-injection vector, not a value
     source; the only thing this module does with hidden text is check it
     against a few plausibility regexes for `hidden_only_fields` reporting.
+
+    `active_case_id` is the packet's own case id (the PDF filename stem).
+    A packet can contain pages for more than one applicant; policy says to
+    use the applicant attached to the active case id. Any page whose own
+    cleanly-read Case ID differs from `active_case_id` is a foreign page:
+    ALL of its evidence is discarded.
     """
     has_image_only = False
     ocr_used = False
     unreadable_pages = 0
+    doc_types_seen: set = set()
+    foreign_pages = 0
 
     all_fields: dict[str, list] = {}
     corrections: dict[str, list] = {}
@@ -352,18 +394,28 @@ def resolve_case(doc) -> CaseRecord:
                 unreadable_pages += 1
 
         text_parse = parse_page(pg.visible, source="text")
-        for key, evs in text_parse.fields.items():
-            all_fields.setdefault(key, []).extend(evs)
-        for key, value in text_parse.corrections.items():
-            corrections.setdefault(key, []).append(value)
+        if _is_foreign_page(text_parse, active_case_id):
+            foreign_pages += 1
+        else:
+            if text_parse.doc_type not in ("cover", "unknown"):
+                doc_types_seen.add(text_parse.doc_type)
+            for key, evs in text_parse.fields.items():
+                all_fields.setdefault(key, []).extend(evs)
+            for key, value in text_parse.corrections.items():
+                corrections.setdefault(key, []).append(value)
 
         if pg.image_only and pg.ocr:
             ocr_used = True
             ocr_parse = parse_page(pg.ocr, source="ocr")
-            for key, evs in ocr_parse.fields.items():
-                all_fields.setdefault(key, []).extend(evs)
-            for key, value in ocr_parse.corrections.items():
-                corrections.setdefault(key, []).append(value)
+            if _is_foreign_page(ocr_parse, active_case_id):
+                foreign_pages += 1
+            else:
+                if ocr_parse.doc_type not in ("cover", "unknown"):
+                    doc_types_seen.add(ocr_parse.doc_type)
+                for key, evs in ocr_parse.fields.items():
+                    all_fields.setdefault(key, []).extend(evs)
+                for key, value in ocr_parse.corrections.items():
+                    corrections.setdefault(key, []).append(value)
 
     resolved_fields = {
         name: _resolve_field(name, all_fields, corrections.get(name, []))
@@ -388,6 +440,9 @@ def resolve_case(doc) -> CaseRecord:
         hidden_only_fields=_hidden_only_fields(doc, resolved_fields),
         unreadable_pages=unreadable_pages,
         saw_observed_flags=bool(all_fields.get("observed_flags")),
+        doc_types_seen=doc_types_seen,
+        bio_confidence=_resolve_text_over_ocr(all_fields.get("bio_confidence", [])),
+        foreign_pages=foreign_pages,
     )
 
     risk_flags = observed_flags | conflicts

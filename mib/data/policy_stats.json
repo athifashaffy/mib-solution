@@ -81,13 +81,13 @@
     "n": 3
   },
   "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b0": {
-    "decided_label_cv_accuracy": 0.666667,
+    "decided_label_cv_accuracy": 0.0,
     "dist": [
-      0.111111,
-      0.333333,
-      0.555556
+      0.2,
+      0.6,
+      0.2
     ],
-    "n": 3
+    "n": 1
   },
   "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b1": {
     "decided_label_cv_accuracy": 1.0,
@@ -161,23 +161,23 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict|rescinded_denial;fee:paid;visa:std;q:o;m1;b1": {
-    "decided_label_cv_accuracy": 0.0,
+  "flags:identity_conflict|sponsor_mismatch;fee:paid;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
-      0.6,
-      0.2
+      0.2,
+      0.6
     ],
     "n": 1
   },
   "flags:illegible_biometrics;fee:missing;visa:std;q:o;m1;b1": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.090909,
-      0.090909,
-      0.818182
+      0.111111,
+      0.111111,
+      0.777778
     ],
-    "n": 4
+    "n": 3
   },
   "flags:illegible_biometrics;fee:missing;visa:std;q:o;m2;b1": {
     "decided_label_cv_accuracy": 1.0,
@@ -191,11 +191,11 @@
   "flags:illegible_biometrics;fee:paid;visa:std;q:o;m0;b1": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.111111,
-      0.111111,
-      0.777778
+      0.090909,
+      0.090909,
+      0.818182
     ],
-    "n": 3
+    "n": 4
   },
   "flags:illegible_biometrics;fee:paid;visa:std;q:o;m1;b1": {
     "decided_label_cv_accuracy": 1.0,
@@ -281,11 +281,11 @@
   "flags:none;fee:missing;visa:dip;q:o;m2;b1": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
-      0.6,
-      0.2,
-      0.2
+      0.714286,
+      0.142857,
+      0.142857
     ],
-    "n": 1
+    "n": 2
   },
   "flags:none;fee:missing;visa:dip;q:u;m2;b0": {
     "decided_label_cv_accuracy": 0.5,
@@ -297,22 +297,22 @@
     "n": 2
   },
   "flags:none;fee:missing;visa:std;q:o;m1;b0": {
-    "decided_label_cv_accuracy": 0.304348,
+    "decided_label_cv_accuracy": 0.272727,
     "dist": [
-      0.428571,
-      0.265306,
-      0.306122
+      0.446809,
+      0.276596,
+      0.276596
     ],
-    "n": 23
+    "n": 22
   },
   "flags:none;fee:missing;visa:std;q:o;m1;b1": {
-    "decided_label_cv_accuracy": 0.055556,
+    "decided_label_cv_accuracy": 0.1,
     "dist": [
-      0.641026,
-      0.179487,
-      0.179487
+      0.581395,
+      0.209302,
+      0.209302
     ],
-    "n": 18
+    "n": 20
   },
   "flags:none;fee:missing;visa:std;q:o;m2;b0": {
     "decided_label_cv_accuracy": 0.454545,
@@ -380,11 +380,11 @@
   "flags:none;fee:paid;visa:dip;q:o;m1;b1": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
-      0.714286,
-      0.142857,
-      0.142857
+      0.6,
+      0.2,
+      0.2
     ],
-    "n": 2
+    "n": 1
   },
   "flags:none;fee:paid;visa:dip;q:t;m0;b0": {
     "decided_label_cv_accuracy": 0.727273,
@@ -405,31 +405,31 @@
     "n": 2
   },
   "flags:none;fee:paid;visa:std;q:o;m0;b0": {
-    "decided_label_cv_accuracy": 0.2,
+    "decided_label_cv_accuracy": 0.25,
     "dist": [
-      0.44186,
+      0.395349,
       0.348837,
-      0.209302
+      0.255814
     ],
     "n": 20
   },
   "flags:none;fee:paid;visa:std;q:o;m0;b1": {
-    "decided_label_cv_accuracy": 0.909091,
+    "decided_label_cv_accuracy": 0.916667,
     "dist": [
-      0.84,
-      0.04,
-      0.12
+      0.851852,
+      0.037037,
+      0.111111
     ],
-    "n": 11
+    "n": 12
   },
   "flags:none;fee:paid;visa:std;q:o;m1;b0": {
-    "decided_label_cv_accuracy": 0.5,
+    "decided_label_cv_accuracy": 0.333333,
     "dist": [
-      0.142857,
-      0.428571,
-      0.428571
+      0.111111,
+      0.555556,
+      0.333333
     ],
-    "n": 2
+    "n": 3
   },
   "flags:none;fee:paid;visa:std;q:o;m1;b1": {
     "decided_label_cv_accuracy": 1.0,
@@ -569,11 +569,11 @@
   "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1;b0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
-      0.428571,
-      0.428571,
-      0.142857
+      0.2,
+      0.6,
+      0.2
     ],
-    "n": 2
+    "n": 1
   },
   "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m2;b1": {
     "decided_label_cv_accuracy": 1.0,
@@ -608,6 +608,15 @@
       0.2,
       0.2,
       0.6
+    ],
+    "n": 1
+  },
+  "flags:sponsor_mismatch;fee:waived;visa:dip;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.6,
+      0.2,
+      0.2
     ],
     "n": 1
   },
@@ -648,22 +657,22 @@
     "n": 2
   },
   "nodate;q:o;m2;b0": {
-    "decided_label_cv_accuracy": 0.230769,
+    "decided_label_cv_accuracy": 0.25,
     "dist": [
-      0.517241,
-      0.241379,
-      0.241379
+      0.555556,
+      0.185185,
+      0.259259
     ],
-    "n": 13
+    "n": 12
   },
   "nodate;q:o;m2;b1": {
-    "decided_label_cv_accuracy": 0.666667,
+    "decided_label_cv_accuracy": 0.6,
     "dist": [
-      0.238095,
-      0.142857,
-      0.619048
+      0.217391,
+      0.217391,
+      0.565217
     ],
-    "n": 9
+    "n": 10
   },
   "nodate;q:u;m2;b0": {
     "decided_label_cv_accuracy": 0.666667,
@@ -693,40 +702,40 @@
     "n": 1
   },
   "nosponsor;q:o;m2;b0": {
-    "decided_label_cv_accuracy": 0.367816,
+    "decided_label_cv_accuracy": 0.372093,
     "dist": [
-      0.276836,
-      0.457627,
-      0.265537
+      0.268571,
+      0.462857,
+      0.268571
     ],
-    "n": 87
+    "n": 86
   },
   "nosponsor;q:o;m2;b1": {
-    "decided_label_cv_accuracy": 0.333333,
+    "decided_label_cv_accuracy": 0.324324,
     "dist": [
-      0.36,
-      0.306667,
-      0.333333
+      0.376623,
+      0.298701,
+      0.324675
     ],
-    "n": 36
+    "n": 37
   },
   "nosponsor;q:u;m2;b0": {
-    "decided_label_cv_accuracy": 0.363636,
+    "decided_label_cv_accuracy": 0.4,
     "dist": [
-      0.36,
-      0.28,
-      0.36
+      0.304348,
+      0.304348,
+      0.391304
     ],
-    "n": 11
+    "n": 10
   },
   "nosponsor;q:u;m2;b1": {
-    "decided_label_cv_accuracy": 0.5,
+    "decided_label_cv_accuracy": 0.4,
     "dist": [
-      0.272727,
-      0.272727,
-      0.454545
+      0.384615,
+      0.230769,
+      0.384615
     ],
-    "n": 4
+    "n": 5
   },
   "note:APPROVED": {
     "decided_label_cv_accuracy": 1.0,
@@ -783,12 +792,12 @@
     "n": 28
   },
   "unpaid": {
-    "decided_label_cv_accuracy": 0.90625,
+    "decided_label_cv_accuracy": 0.903226,
     "dist": [
-      0.044776,
-      0.880597,
-      0.074627
+      0.046154,
+      0.876923,
+      0.076923
     ],
-    "n": 32
+    "n": 31
   }
 }

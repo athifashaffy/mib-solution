@@ -19,7 +19,14 @@ from pathlib import Path
 
 import fitz
 
-from .parse import has_finding_sentence, looks_like_note
+from .parse import (
+    has_fee_value,
+    has_finding_sentence,
+    has_observed_flags_line,
+    looks_like_biometric,
+    looks_like_fee,
+    looks_like_note,
+)
 
 # A span is hidden iff its rendered luminance exceeds this threshold (i.e. it
 # is at or near white and would be invisible against a white page background).
@@ -194,17 +201,30 @@ def _ocr_at_dpi(page: "fitz.Page", dpi: int) -> str:
         Path(png_path).unlink(missing_ok=True)
 
 
+# (looks-like hint, recovered-the-goal check) pairs for the targeted
+# higher-DPI retry: a page matching a hint whose goal content didn't
+# survive the first OCR pass gets one 300-dpi retry, adopted only when the
+# retry actually recovers that content — so a retry can never make a page
+# worse. Notes carry the decision sentence, fee receipts the fee status,
+# biometric slips the observed risk flags.
+_RETRY_GOALS = (
+    (looks_like_note, has_finding_sentence),
+    (looks_like_fee, has_fee_value),
+    (looks_like_biometric, has_observed_flags_line),
+)
+
+
 def _ocr_page(page: "fitz.Page") -> str:
-    """First-pass OCR at OCR_DPI, plus one targeted higher-DPI retry for
-    pages that look like adjudicator notes but whose Finding sentence did
-    not survive the first pass. The retry result is adopted only when it
-    actually recovers a parseable Finding sentence — otherwise the first
-    pass stands, so the retry can never make a page worse."""
+    """First-pass OCR at OCR_DPI, plus at most one targeted higher-DPI
+    retry when the page looks like a doc type whose key content didn't
+    survive the first pass (see _RETRY_GOALS)."""
     text = _ocr_at_dpi(page, OCR_DPI)
-    if looks_like_note(text) and not has_finding_sentence(text):
-        retry_text = _ocr_at_dpi(page, OCR_NOTE_RETRY_DPI)
-        if has_finding_sentence(retry_text):
-            return retry_text
+    for looks_like, recovered in _RETRY_GOALS:
+        if looks_like(text) and not recovered(text):
+            retry_text = _ocr_at_dpi(page, OCR_NOTE_RETRY_DPI)
+            if recovered(retry_text):
+                return retry_text
+            break
     return text
 
 

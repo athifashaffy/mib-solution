@@ -184,6 +184,7 @@ _LABELS = [
     ("registry name", "applicant_name", False),
     ("registry status", "registry_status", False),
     ("observed flags", "observed_flags", True),
+    ("biometric confidence", "bio_confidence", False),
 ]
 
 
@@ -382,6 +383,35 @@ def looks_like_note(text: str) -> bool:
         if _levenshtein(m.group(1).lower(), "finding") <= _FUZZY_LABEL_MAX_DISTANCE:
             return True
     return False
+
+
+def _fuzzy_word_present(text: str, target: str, max_distance: int = 1) -> bool:
+    for word in re.findall(r"[A-Za-z]{4,12}", text):
+        if _levenshtein(word.lower(), target) <= max_distance:
+            return True
+    return False
+
+
+def looks_like_fee(text: str) -> bool:
+    """Cheap hint that OCR text is probably a fee receipt page."""
+    return bool(text) and (_fuzzy_word_present(text, "receipt")
+                           or _fuzzy_word_present(text, "waiver"))
+
+
+def has_fee_value(text: str) -> bool:
+    """True iff parsing recovers a fee_status evidence value."""
+    return "fee_status" in parse_page(text or "", "ocr").fields
+
+
+def looks_like_biometric(text: str) -> bool:
+    """Cheap hint that OCR text is probably a biometric scan slip."""
+    return bool(text) and (_fuzzy_word_present(text, "biometric")
+                           or "b-13" in text.lower())
+
+
+def has_observed_flags_line(text: str) -> bool:
+    """True iff parsing recovers an observed_flags evidence value."""
+    return "observed_flags" in parse_page(text or "", "ocr").fields
 
 
 def _parse_finding(flat: str, add) -> None:

@@ -24,7 +24,7 @@ def process_one(pdf_path_str):
     stem = pdf_path.stem
     try:
         doc = extract_document(pdf_path_str)
-        record = resolve_case(doc)
+        record = resolve_case(doc, active_case_id=stem)
         fields = dict(record.fields)
         ev = record.evidence
         return {
@@ -45,6 +45,9 @@ def process_one(pdf_path_str):
                 "hidden_only_fields": sorted(ev.hidden_only_fields),
                 "unreadable_pages": ev.unreadable_pages,
                 "saw_observed_flags": ev.saw_observed_flags,
+                "doc_types_seen": sorted(ev.doc_types_seen),
+                "bio_confidence": ev.bio_confidence,
+                "foreign_pages": ev.foreign_pages,
             },
             "error": None,
         }
