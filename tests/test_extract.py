@@ -15,9 +15,7 @@ import pytest
 
 from mib.extract import (
     DocText,
-    OCR_MIN_CHARS,
     PageText,
-    _non_whitespace_count,
     extract_document,
 )
 
@@ -186,10 +184,16 @@ def test_corrupt_pdf_raises(tmp_path):
         extract_document(bad_path)
 
 
-def test_non_whitespace_count_ignores_whitespace():
-    assert _non_whitespace_count("a b\nc\t d") == 4
-    assert _non_whitespace_count("   \n\t  ") == 0
-    assert _non_whitespace_count("") == 0
+def test_unreadable_ocr_counts_non_whitespace():
+    # The unreadable-page gate lives in mib.resolve; assert its non-whitespace
+    # counting semantics here since extract's OCR quality feeds it directly.
+    from mib.resolve import _is_unreadable_ocr
+
+    assert _is_unreadable_ocr("h \n" * 40) is True  # 120 chars, only 40 non-ws
+    assert _is_unreadable_ocr("x" * 50) is False
+    assert _is_unreadable_ocr("x" * 49) is True
+    assert _is_unreadable_ocr("   \n\t  ") is True
+    assert _is_unreadable_ocr(None) is True
 
 
 

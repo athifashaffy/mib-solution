@@ -34,3 +34,18 @@ def test_non_pdf_and_bad_stem_files_are_ignored(tmp_path):
     )
     assert proc.returncode == 0, proc.stderr
     assert out.read_text() == ""
+
+
+def test_parallel_output_is_sorted_by_case_id(tmp_path):
+    # Three corrupt-but-conforming PDFs exercise the Pool path and the
+    # fallback row; imap_unordered arrival order must not leak into output.
+    for stem in ("MIB-999903", "MIB-999901", "MIB-999902"):
+        (tmp_path / f"{stem}.pdf").write_bytes(b"%PDF-1.4 truncated garbage")
+    out = tmp_path / "predictions.jsonl"
+    proc = subprocess.run(
+        [sys.executable, "-m", "mib.main", str(tmp_path), str(out)],
+        capture_output=True, text=True, cwd=REPO,
+    )
+    assert proc.returncode == 0, proc.stderr
+    ids = [json.loads(l)["case_id"] for l in out.read_text().splitlines()]
+    assert ids == ["MIB-999901", "MIB-999902", "MIB-999903"]

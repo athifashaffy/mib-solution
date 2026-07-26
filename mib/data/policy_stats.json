@@ -639,13 +639,13 @@
     "n": 1
   },
   "nodate-hidden": {
-    "decided_label_cv_accuracy": 0.375,
+    "decided_label_cv_accuracy": 0.347826,
     "dist": [
-      0.333333,
-      0.294118,
-      0.372549
+      0.346939,
+      0.306122,
+      0.346939
     ],
-    "n": 24
+    "n": 23
   },
   "nodate;q:o;m1;b1": {
     "decided_label_cv_accuracy": 0.666667,
@@ -702,13 +702,13 @@
     "n": 2
   },
   "nosponsor;q:o;m2;b0": {
-    "decided_label_cv_accuracy": 0.333333,
+    "decided_label_cv_accuracy": 0.35,
     "dist": [
-      0.259259,
-      0.407407,
-      0.333333
+      0.253012,
+      0.39759,
+      0.349398
     ],
-    "n": 39
+    "n": 40
   },
   "nosponsor;q:o;m2;b1": {
     "decided_label_cv_accuracy": 0.1,

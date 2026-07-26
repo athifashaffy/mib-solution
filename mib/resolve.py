@@ -370,21 +370,16 @@ _SWEEP_DATE_MIN = "2025-01-01"
 _SWEEP_DATE_MAX = "2026-12-31"
 
 
-def _pattern_sweep(doc, resolved_fields: dict) -> dict:
+def _pattern_sweep(trusted_texts: list, resolved_fields: dict) -> dict:
     """Fill still-None sponsor_id/arrival_date from bare pattern hits in
-    trusted text. Most-frequent hit wins; a tie between distinct values
-    means ambiguity, so nothing is filled."""
+    trusted, non-foreign page text. Most-frequent hit wins; a tie between
+    distinct values means ambiguity, so nothing is filled."""
     wanted = [n for n in ("sponsor_id", "arrival_date")
               if resolved_fields.get(n) is None]
     if not wanted:
         return {}
 
-    trusted = []
-    for pg in doc.pages:
-        trusted.append(pg.visible)
-        if pg.image_only and pg.ocr:
-            trusted.append(pg.ocr)
-    text = "\n".join(trusted)
+    text = "\n".join(trusted_texts)
 
     out: dict = {}
     if "sponsor_id" in wanted:
@@ -437,6 +432,7 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
 
     all_fields: dict[str, list] = {}
     corrections: dict[str, list] = {}
+    trusted_texts: list = []
 
     for pg in doc.pages:
         if pg.image_only:
@@ -448,6 +444,7 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
         if _is_foreign_page(text_parse, active_case_id):
             foreign_pages += 1
         else:
+            trusted_texts.append(pg.visible)
             if text_parse.doc_type not in ("cover", "unknown"):
                 doc_types_seen.add(text_parse.doc_type)
             for key, evs in text_parse.fields.items():
@@ -461,6 +458,7 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
             if _is_foreign_page(ocr_parse, active_case_id):
                 foreign_pages += 1
             else:
+                trusted_texts.append(pg.ocr)
                 if ocr_parse.doc_type not in ("cover", "unknown"):
                     doc_types_seen.add(ocr_parse.doc_type)
                 for key, evs in ocr_parse.fields.items():
@@ -476,10 +474,11 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
     # Last-resort pattern sweep: sponsor ids and arrival dates also appear in
     # attestation prose and registry margins that the label-anchored parsers
     # miss when OCR mangles the labels. Only fills a field that resolved to
-    # None, only from TRUSTED text (visible layers + OCR of image-only
-    # pages, never hidden spans), and only when the pattern hits are
+    # None, only from TRUSTED, non-foreign page text (visible layers + OCR
+    # of image-only pages, never hidden spans, never pages belonging to a
+    # different applicant's case id), and only when the pattern hits are
     # unambiguous enough to take the most frequent one.
-    for name, value in _pattern_sweep(doc, resolved_fields).items():
+    for name, value in _pattern_sweep(trusted_texts, resolved_fields).items():
         resolved_fields[name] = value
 
     conflicts = _detect_conflicts(all_fields)

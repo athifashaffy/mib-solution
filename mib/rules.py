@@ -9,7 +9,8 @@ mib/data/policy_stats.json).
 Provenance: the revoked-sponsor list, embargoed-world list, and staleness
 cutoff are policy knowledge fitted on the public train labels — the same
 artifact class as model weights. Nothing here is keyed to specific case IDs
-or file names; every rule applies to any fresh packet.
+or file names; every rule applies to any fresh packet. Re-derive every
+learned constant with tools/mine_policy.py.
 """
 from dataclasses import dataclass
 

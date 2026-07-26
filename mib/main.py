@@ -11,6 +11,7 @@ deterministic and sorted by case_id.
 """
 import re
 import sys
+from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 from mib.decide import decide, load_stats
@@ -22,6 +23,12 @@ from mib.rules import infer_flags, path_of
 CASE_ID_PATTERN = re.compile(r"^MIB-[0-9]{6}$")
 
 FALLBACK_CONFIDENCE = 0.3
+
+
+def _process_pdf_str(pdf_path_str: str) -> dict:
+    """Pool worker wrapper: loads stats lazily per process (cached by
+    load_stats) and never raises."""
+    return process_pdf(Path(pdf_path_str), load_stats())
 
 
 def process_pdf(pdf_path: Path, stats) -> dict:
@@ -42,15 +49,21 @@ def process_pdf(pdf_path: Path, stats) -> dict:
         return build_row(case_id, {}, "NEEDS_REVIEW", FALLBACK_CONFIDENCE)
 
 
-def process_dir(input_dir, output_path) -> None:
+def process_dir(input_dir, output_path, jobs: int | None = None) -> None:
     input_dir = Path(input_dir)
-    stats = load_stats()
-    rows = []
-    for pdf_path in sorted(input_dir.glob("*.pdf")):
-        if not CASE_ID_PATTERN.fullmatch(pdf_path.stem):
-            # A non-conforming id would make the whole submission invalid.
-            continue
-        rows.append(process_pdf(pdf_path, stats))
+    pdf_paths = [str(p) for p in sorted(input_dir.glob("*.pdf"))
+                 if CASE_ID_PATTERN.fullmatch(p.stem)]
+    # A non-conforming filename stem would make the whole submission invalid,
+    # so such files are skipped above.
+    jobs = jobs or min(4, cpu_count())
+    if jobs <= 1 or len(pdf_paths) <= 1:
+        rows = [_process_pdf_str(p) for p in pdf_paths]
+    else:
+        with Pool(jobs) as pool:
+            rows = list(pool.imap_unordered(_process_pdf_str, pdf_paths,
+                                            chunksize=8))
+    # write_jsonl sorts by case_id, so imap_unordered's arrival order does
+    # not affect the output bytes.
     write_jsonl(rows, output_path)
 
 

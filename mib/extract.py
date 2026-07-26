@@ -41,10 +41,6 @@ MIN_VISIBLE_FONT_SIZE = 3
 # least one embedded image).
 IMAGE_ONLY_VISIBLE_CHAR_THRESHOLD = 100
 
-# OCR is retried with a different tesseract page-segmentation mode when the
-# first pass yields fewer than this many non-whitespace characters.
-OCR_MIN_CHARS = 50
-
 OCR_DPI = 200
 # Retry DPI for pages that look like adjudicator notes whose Finding
 # sentence didn't survive the first OCR pass. Notes carry the single most
@@ -149,11 +145,6 @@ def _split_page_spans(page: "fitz.Page") -> tuple[str, str]:
     return "\n".join(visible_lines), "\n".join(hidden_lines)
 
 
-def _non_whitespace_count(text: str) -> int:
-    """Count of non-whitespace characters in text."""
-    return sum(1 for c in text if not c.isspace())
-
-
 _USER_WORDS_PATH = Path(__file__).resolve().parent / "data" / "user_words.txt"
 
 
@@ -169,7 +160,7 @@ def _run_tesseract(png_path: str, psm: str) -> str:
             errors="replace",
             timeout=OCR_TIMEOUT_SECONDS,
         )
-    except (subprocess.TimeoutExpired, subprocess.CalledProcessError, OSError):
+    except (subprocess.TimeoutExpired, OSError):
         return ""
     if result.returncode != 0:
         return ""
