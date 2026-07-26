@@ -25,7 +25,8 @@ CONF_MAX = 0.99
 # rank catastrophic false-approval count explicitly and the interview bar
 # requires "no catastrophic false-approval pattern", both of which price
 # false approvals beyond the -4 raw points the expected-value math sees.
-FA_GUARD_MAX_PD = 0.15
+FA_GUARD_MAX_PD = 0.12
+
 
 _LABELS = ("APPROVED", "DENIED", "NEEDS_REVIEW")
 

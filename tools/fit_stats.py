@@ -122,9 +122,10 @@ def main():
         for cid, rp, truth in cases:
             if fold_of[cid] != k:
                 continue
-            dist = rp.dist if rp.dist is not None else smoothed_dist(
-                train_counts[rp.path_id])
-            decided = decide_label(dist)
+            if rp.dist is not None:
+                decided = decide_label(rp.dist)
+            else:
+                decided = decide_label(smoothed_dist(train_counts[rp.path_id]))
             oof_total[rp.path_id] += 1
             oof_correct[rp.path_id] += int(decided == truth)
 
