@@ -24,7 +24,12 @@ verdict as a bare word ("DENIED") *and* as a sentence ("Finding: DENIED.
 Reason: ..."), and other pages carry decoy strings ("SAMPLE DENIAL",
 "COPY ARTIFACT", "CASEWORK") that look like verdict evidence but are not.
 Only the "Finding:" sentence is ever trusted for `note_verdict`/
-`note_reason`.
+`note_reason`. Scanned (OCR'd) note pages routinely mangle this sentence's
+punctuation ("Finding;" for "Finding:", no punctuation before "Reason",
+"Reason;" for "Reason:", digit/letter noise in the verdict word itself
+like "APPR0VED") -- the Finding regex tolerates all of that, and a verdict
+word that isn't an exact vocabulary match is snapped via Levenshtein
+distance (<=1, must be unique) rather than dropped outright.
 """
 import re
 from dataclasses import dataclass, field
@@ -214,18 +219,85 @@ def _flatten(text: str) -> str:
 # above the Finding line, and unrelated pages carry decoy strings like
 # "SAMPLE DENIAL" / "COPY ARTIFACT" / "CASEWORK" -- none of that is
 # matched here on purpose.
+#
+# Scanned (OCR'd) note pages routinely mangle the punctuation around this
+# sentence -- "Finding;" instead of "Finding:", no punctuation at all
+# between the verdict and "Reason", "Reason;" instead of "Reason:" -- so
+# both label colons are tolerated as ":" or ";" and the punctuation between
+# the verdict and "Reason" is optional. The verdict capture also tolerates
+# stray digits (OCR 0/O confusion, e.g. "APPR0VED"); `_normalize_verdict`
+# is responsible for snapping that back to a real vocabulary word (or
+# rejecting it).
 _FINDING_RE = re.compile(
-    r"(?i)Finding:\s*([A-Za-z_ ]+?)[.,]\s*Reason:\s*(.+?)"
+    r"(?i)Finding[:;]\s*([A-Za-z0-9_ ]+?)[.,;]?\s*Reason[:;]\s*(.+?)"
     r"(?=\s+Packet\s+MIB-|\s+Synthetic\s+hiring|$)"
 )
 
+# The only verdicts `_normalize_verdict` will ever emit.
+_VALID_VERDICTS = ("APPROVED", "DENIED", "NEEDS_REVIEW")
+
+# Beyond this edit distance a captured verdict word is presumed to be
+# unrelated noise rather than an OCR-mangled real verdict -- e.g. "NEMED"
+# (distance 4 from DENIED) must never snap to DENIED.
+_VERDICT_SNAP_MAX_DISTANCE = 1
+
+
+def _levenshtein(a: str, b: str) -> int:
+    """Standard dynamic-programming edit distance (insert/delete/substitute,
+    unit cost). Small/local on purpose -- only ever called against the
+    three-entry `_VALID_VERDICTS` tuple, so no need to share `mib.vocab`'s
+    (private) implementation."""
+    if a == b:
+        return 0
+    if not a:
+        return len(b)
+    if not b:
+        return len(a)
+    prev_row = list(range(len(b) + 1))
+    for i, ca in enumerate(a, start=1):
+        cur_row = [i] + [0] * len(b)
+        for j, cb in enumerate(b, start=1):
+            cost = 0 if ca == cb else 1
+            cur_row[j] = min(
+                prev_row[j] + 1,
+                cur_row[j - 1] + 1,
+                prev_row[j - 1] + cost,
+            )
+        prev_row = cur_row
+    return prev_row[-1]
+
 
 def _normalize_verdict(raw: str) -> str | None:
-    value = raw.strip().strip(".,").strip()
+    value = raw.strip().strip(".,;").strip()
     if not value:
         return None
     value = re.sub(r"\s+", "_", value)
-    return value.upper()
+    value = re.sub(r"[^A-Za-z0-9_]", "", value)
+    if not value:
+        return None
+    value = value.upper()
+    if value in _VALID_VERDICTS:
+        return value
+    # Not an exact vocabulary member (e.g. OCR noise like "APPR0VED") --
+    # try snapping to the closest verdict, but only ever on an unambiguous,
+    # close (<=1 edit) match. Ties or distant candidates yield no verdict
+    # at all rather than a guess.
+    best_distance = None
+    best_candidates: list[str] = []
+    for candidate in _VALID_VERDICTS:
+        distance = _levenshtein(value, candidate)
+        if best_distance is None or distance < best_distance:
+            best_distance = distance
+            best_candidates = [candidate]
+        elif distance == best_distance:
+            best_candidates.append(candidate)
+    if (
+        best_distance is not None
+        and best_distance <= _VERDICT_SNAP_MAX_DISTANCE
+        and len(best_candidates) == 1
+    ):
+        return best_candidates[0]
+    return None
 
 
 def _parse_finding(flat: str, add) -> None:

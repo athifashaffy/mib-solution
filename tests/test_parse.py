@@ -323,6 +323,62 @@ def test_no_finding_line_means_no_note_verdict():
     assert "note_reason" not in result.fields
 
 
+# --- OCR'd note pages: mangled "Finding"/"Reason" punctuation (real
+# literals + one synthetic OCR-distance case) ------------------------------
+#
+# A 300-PDF corpus sample showed 0/36 scanned adjudicator-note pages
+# produced a verdict before this fix (vs. 54/54 for text-layer notes):
+# tesseract routinely drops the punctuation between "Finding: <verdict>"
+# and "Reason:", swaps ":" for ";", and occasionally mangles a letter in
+# the verdict word itself (e.g. "0" for "O").
+
+NOTE_OCR_MIB_000026 = (
+    "Manual Adjudicator Note\n"
+    "MIB-000026 | MIB Eyes Only\n"
+    "Finding: DENIED\n"
+    "Reason; Denial supported by damaged registry evidence and biometric mismatch.\n"
+)
+
+
+def test_ocr_finding_no_punctuation_before_reason_semicolon():
+    # Real literal (OCR'd): no "." or "," between the verdict and "Reason",
+    # and "Reason;" instead of "Reason:".
+    result = parse_page(NOTE_OCR_MIB_000026, "ocr")
+    assert _values(result.fields, "note_verdict") == ["DENIED"]
+    assert _values(result.fields, "note_reason") == [
+        "Denial supported by damaged registry evidence and biometric mismatch."
+    ]
+
+
+def test_ocr_finding_colon_reason_colon_no_punctuation():
+    text = "Finding: NEEDS REVIEW\nReason: Missing sponsor attestation.\n"
+    result = parse_page(text, "ocr")
+    assert _values(result.fields, "note_verdict") == ["NEEDS_REVIEW"]
+
+
+def test_ocr_finding_semicolon_variant():
+    # Real literal (OCR'd): "Finding;" instead of "Finding:".
+    text = "Finding; DENIED. Reason: Transit class cannot authorize declared work.\n"
+    result = parse_page(text, "ocr")
+    assert _values(result.fields, "note_verdict") == ["DENIED"]
+
+
+def test_ocr_verdict_digit_letter_confusion_snaps_at_distance_one():
+    # "APPR0VED" (zero for O) is distance 1 from APPROVED and distance >=2
+    # from every other vocabulary verdict -- unique closest match snaps.
+    text = "Finding: APPR0VED. Reason: All checks pass.\n"
+    result = parse_page(text, "ocr")
+    assert _values(result.fields, "note_verdict") == ["APPROVED"]
+
+
+def test_ocr_verdict_too_mangled_yields_no_verdict():
+    # "NEMED" is distance 4 from DENIED (and far from the others) --
+    # must NOT snap to DENIED or anything else.
+    text = "Finding: NEMED. Reason: garbage.\n"
+    result = parse_page(text, "ocr")
+    assert "note_verdict" not in result.fields
+
+
 # --- OCR-noise layout (synthetic, per task-brief ground truth) ------------
 
 
