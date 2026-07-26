@@ -394,3 +394,56 @@ def test_own_page_evidence_is_kept():
     record = resolve_case(doc, active_case_id="MIB-000001")
     assert record.fields["applicant_name"] == "Miraquell Ixovara"
     assert record.evidence.foreign_pages == 0
+
+
+# --- last-resort pattern sweep -------------------------------------------
+
+def test_sweep_fills_missing_sponsor_from_trusted_prose():
+    from mib.extract import DocText, PageText
+    from mib.resolve import resolve_case
+    page = PageText(
+        visible="Some attestation prose mentioning SPN-4321 twice.\nSPN-4321 again.\n",
+        hidden="", ocr=None, image_only=False)
+    rec = resolve_case(DocText(pages=[page]))
+    assert rec.fields["sponsor_id"] == "SPN-4321"
+
+
+def test_sweep_never_reads_hidden_text():
+    from mib.extract import DocText, PageText
+    from mib.resolve import resolve_case
+    page = PageText(visible="no ids here\n",
+                    hidden="SPN-9999 SPN-9999 2026-03-03 2026-03-03",
+                    ocr=None, image_only=False)
+    rec = resolve_case(DocText(pages=[page]))
+    assert rec.fields["sponsor_id"] is None
+    assert rec.fields["arrival_date"] is None
+
+
+def test_sweep_tie_is_ambiguous_and_fills_nothing():
+    from mib.extract import DocText, PageText
+    from mib.resolve import resolve_case
+    page = PageText(visible="SPN-1111 vs SPN-2222\n", hidden="", ocr=None,
+                    image_only=False)
+    rec = resolve_case(DocText(pages=[page]))
+    assert rec.fields["sponsor_id"] is None
+
+
+def test_sweep_rejects_out_of_window_dates():
+    from mib.extract import DocText, PageText
+    from mib.resolve import resolve_case
+    page = PageText(visible="junk 2109-91-14 and 1900-01-01\n", hidden="",
+                    ocr=None, image_only=False)
+    rec = resolve_case(DocText(pages=[page]))
+    assert rec.fields["arrival_date"] is None
+
+
+def test_sweep_does_not_override_resolved_value():
+    from mib.extract import DocText, PageText
+    from mib.resolve import resolve_case
+    page = PageText(
+        visible=("FORM I-8090: Extraterrestrial Work Authorization Intake\n"
+                 "Sponsor ID\nSPN-1234\n"
+                 "Other text mentions SPN-8888 SPN-8888 SPN-8888\n"),
+        hidden="", ocr=None, image_only=False)
+    rec = resolve_case(DocText(pages=[page]))
+    assert rec.fields["sponsor_id"] == "SPN-1234"

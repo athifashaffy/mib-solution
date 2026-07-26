@@ -19,6 +19,7 @@ trustworthy evidence resolves to `None` -- never a placeholder. Placeholders
 by `mib.output.build_row`, not here.
 """
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import date
 
@@ -361,6 +362,56 @@ def _is_unreadable_ocr(ocr_text: str | None) -> bool:
 # --- entry point ---------------------------------------------------------------
 
 
+_SWEEP_SPONSOR_RE = re.compile(r"\bSPN-\d{4}\b")
+_SWEEP_DATE_RE = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
+# Plausible arrival window for this program (train range is 2025-05..2026-07;
+# a generous pad keeps the sweep from adopting OCR junk like 2109-91-14).
+_SWEEP_DATE_MIN = "2025-01-01"
+_SWEEP_DATE_MAX = "2026-12-31"
+
+
+def _pattern_sweep(doc, resolved_fields: dict) -> dict:
+    """Fill still-None sponsor_id/arrival_date from bare pattern hits in
+    trusted text. Most-frequent hit wins; a tie between distinct values
+    means ambiguity, so nothing is filled."""
+    wanted = [n for n in ("sponsor_id", "arrival_date")
+              if resolved_fields.get(n) is None]
+    if not wanted:
+        return {}
+
+    trusted = []
+    for pg in doc.pages:
+        trusted.append(pg.visible)
+        if pg.image_only and pg.ocr:
+            trusted.append(pg.ocr)
+    text = "\n".join(trusted)
+
+    out: dict = {}
+    if "sponsor_id" in wanted:
+        hits = Counter(_SWEEP_SPONSOR_RE.findall(text))
+        if hits:
+            (top, n), *rest = hits.most_common()
+            if not rest or rest[0][1] < n:
+                out["sponsor_id"] = top
+    if "arrival_date" in wanted:
+        dates = [d for d in _SWEEP_DATE_RE.findall(text)
+                 if _SWEEP_DATE_MIN <= d <= _SWEEP_DATE_MAX and _is_real_date(d)]
+        hits = Counter(dates)
+        if hits:
+            (top, n), *rest = hits.most_common()
+            if not rest or rest[0][1] < n:
+                out["arrival_date"] = top
+    return out
+
+
+def _is_real_date(value: str) -> bool:
+    try:
+        date.fromisoformat(value)
+        return True
+    except ValueError:
+        return False
+
+
 def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
     """Merge every page of `doc` into a single CaseRecord.
 
@@ -421,6 +472,15 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
         name: _resolve_field(name, all_fields, corrections.get(name, []))
         for name in FIELD_NAMES
     }
+
+    # Last-resort pattern sweep: sponsor ids and arrival dates also appear in
+    # attestation prose and registry margins that the label-anchored parsers
+    # miss when OCR mangles the labels. Only fills a field that resolved to
+    # None, only from TRUSTED text (visible layers + OCR of image-only
+    # pages, never hidden spans), and only when the pattern hits are
+    # unambiguous enough to take the most frequent one.
+    for name, value in _pattern_sweep(doc, resolved_fields).items():
+        resolved_fields[name] = value
 
     conflicts = _detect_conflicts(all_fields)
     observed_flags = _resolve_observed_flags(all_fields.get("observed_flags", []))
