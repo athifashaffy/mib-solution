@@ -17,7 +17,7 @@
     ],
     "n": 30
   },
-  "flags:identity_conflict;fee:missing;visa:dip;q:o;m1;b1": {
+  "flags:identity_conflict;fee:missing;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -26,7 +26,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:missing;visa:std;q:o;m1;b0": {
+  "flags:identity_conflict;fee:missing;visa:std;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.5,
     "dist": [
       0.272727,
@@ -35,7 +35,7 @@
     ],
     "n": 4
   },
-  "flags:identity_conflict;fee:missing;visa:std;q:o;m1;b1": {
+  "flags:identity_conflict;fee:missing;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.333333,
@@ -44,7 +44,7 @@
     ],
     "n": 3
   },
-  "flags:identity_conflict;fee:missing;visa:std;q:o;m2;b1": {
+  "flags:identity_conflict;fee:missing;visa:std;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -53,7 +53,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:paid;visa:dip;q:t;m0;b0": {
+  "flags:identity_conflict;fee:paid;visa:dip;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.111111,
@@ -62,7 +62,7 @@
     ],
     "n": 3
   },
-  "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b0": {
+  "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.2,
@@ -71,7 +71,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b1": {
+  "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.142857,
@@ -80,7 +80,7 @@
     ],
     "n": 2
   },
-  "flags:identity_conflict;fee:paid;visa:std;q:t;m0;b0": {
+  "flags:identity_conflict;fee:paid;visa:std;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -89,7 +89,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:waived;visa:dip;q:o;m0;b1": {
+  "flags:identity_conflict;fee:waived;visa:dip;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -98,7 +98,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:waived;visa:std;q:o;m0;b1": {
+  "flags:identity_conflict;fee:waived;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -107,7 +107,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:waived;visa:std;q:t;m0;b0": {
+  "flags:identity_conflict;fee:waived;visa:std;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.111111,
@@ -116,7 +116,7 @@
     ],
     "n": 3
   },
-  "flags:identity_conflict|illegible_biometrics;fee:missing;visa:std;q:o;m1;b1": {
+  "flags:identity_conflict|illegible_biometrics;fee:missing;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -125,7 +125,7 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict|illegible_biometrics;fee:paid;visa:std;q:o;m0;b1": {
+  "flags:identity_conflict|illegible_biometrics;fee:paid;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -134,7 +134,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m1;b1": {
+  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.076923,
@@ -143,7 +143,7 @@
     ],
     "n": 5
   },
-  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m2;b1": {
+  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -152,7 +152,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics;fee:paid;visa:dip;q:o;m2;b1": {
+  "flags:illegible_biometrics;fee:paid;visa:dip;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -161,7 +161,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m0;b1": {
+  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.111111,
@@ -170,7 +170,7 @@
     ],
     "n": 3
   },
-  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m1;b1": {
+  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -179,7 +179,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics;fee:waived;visa:dip;q:o;m1;b1": {
+  "flags:illegible_biometrics;fee:waived;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -188,7 +188,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics;fee:waived;visa:std;q:o;m0;b1": {
+  "flags:illegible_biometrics;fee:waived;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -197,7 +197,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics;fee:waived;visa:std;q:o;m1;b1": {
+  "flags:illegible_biometrics;fee:waived;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -206,7 +206,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics|rescinded_denial;fee:missing;visa:dip;q:o;m1;b1": {
+  "flags:illegible_biometrics|rescinded_denial;fee:missing;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -215,7 +215,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics|rescinded_denial;fee:missing;visa:std;q:o;m2;b1": {
+  "flags:illegible_biometrics|rescinded_denial;fee:missing;visa:std;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -224,7 +224,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics|rescinded_denial;fee:paid;visa:dip;q:o;m0;b1": {
+  "flags:illegible_biometrics|rescinded_denial;fee:paid;visa:dip;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -233,7 +233,7 @@
     ],
     "n": 1
   },
-  "flags:illegible_biometrics|sponsor_mismatch;fee:waived;visa:std;q:o;m0;b1": {
+  "flags:illegible_biometrics|sponsor_mismatch;fee:waived;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -242,16 +242,16 @@
     ],
     "n": 1
   },
-  "flags:none;fee:missing;visa:dip;q:o;m1;b0": {
-    "decided_label_cv_accuracy": 0.25,
+  "flags:none;fee:missing;visa:dip;q:o;m1;b0;g0": {
+    "decided_label_cv_accuracy": 0.272727,
     "dist": [
-      0.481481,
-      0.185185,
-      0.333333
+      0.52,
+      0.12,
+      0.36
     ],
-    "n": 12
+    "n": 11
   },
-  "flags:none;fee:missing;visa:dip;q:o;m1;b1": {
+  "flags:none;fee:missing;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.9,
     "dist": [
       0.826087,
@@ -260,7 +260,7 @@
     ],
     "n": 10
   },
-  "flags:none;fee:missing;visa:dip;q:o;m2;b0": {
+  "flags:none;fee:missing;visa:dip;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.454545,
     "dist": [
       0.28,
@@ -269,7 +269,7 @@
     ],
     "n": 11
   },
-  "flags:none;fee:missing;visa:dip;q:o;m2;b1": {
+  "flags:none;fee:missing;visa:dip;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -278,7 +278,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:missing;visa:dip;q:u;m1;b1": {
+  "flags:none;fee:missing;visa:dip;q:u;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -287,7 +287,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:missing;visa:std;q:o;m1;b0": {
+  "flags:none;fee:missing;visa:std;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.384615,
     "dist": [
       0.345455,
@@ -296,7 +296,7 @@
     ],
     "n": 26
   },
-  "flags:none;fee:missing;visa:std;q:o;m1;b1": {
+  "flags:none;fee:missing;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.125,
     "dist": [
       0.647059,
@@ -305,7 +305,7 @@
     ],
     "n": 24
   },
-  "flags:none;fee:missing;visa:std;q:o;m2;b0": {
+  "flags:none;fee:missing;visa:std;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.5,
     "dist": [
       0.2,
@@ -314,7 +314,7 @@
     ],
     "n": 16
   },
-  "flags:none;fee:missing;visa:std;q:o;m2;b1": {
+  "flags:none;fee:missing;visa:std;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 0.5,
     "dist": [
       0.428571,
@@ -323,7 +323,7 @@
     ],
     "n": 2
   },
-  "flags:none;fee:paid;visa:dip;q:o;m0;b0": {
+  "flags:none;fee:paid;visa:dip;q:o;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.625,
     "dist": [
       0.368421,
@@ -332,7 +332,7 @@
     ],
     "n": 8
   },
-  "flags:none;fee:paid;visa:dip;q:o;m0;b1": {
+  "flags:none;fee:paid;visa:dip;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.92,
@@ -341,7 +341,7 @@
     ],
     "n": 11
   },
-  "flags:none;fee:paid;visa:dip;q:o;m1;b0": {
+  "flags:none;fee:paid;visa:dip;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.111111,
@@ -350,7 +350,7 @@
     ],
     "n": 3
   },
-  "flags:none;fee:paid;visa:dip;q:o;m1;b1": {
+  "flags:none;fee:paid;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -359,7 +359,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:paid;visa:dip;q:o;m2;b0": {
+  "flags:none;fee:paid;visa:dip;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -368,7 +368,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:paid;visa:dip;q:t;m0;b0": {
+  "flags:none;fee:paid;visa:dip;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.727273,
     "dist": [
       0.702128,
@@ -377,7 +377,7 @@
     ],
     "n": 22
   },
-  "flags:none;fee:paid;visa:std;q:o;m0;b0": {
+  "flags:none;fee:paid;visa:std;q:o;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.26087,
     "dist": [
       0.469388,
@@ -386,7 +386,7 @@
     ],
     "n": 23
   },
-  "flags:none;fee:paid;visa:std;q:o;m0;b1": {
+  "flags:none;fee:paid;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 0.866667,
     "dist": [
       0.818182,
@@ -395,7 +395,7 @@
     ],
     "n": 15
   },
-  "flags:none;fee:paid;visa:std;q:o;m1;b0": {
+  "flags:none;fee:paid;visa:std;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.666667,
     "dist": [
       0.111111,
@@ -404,7 +404,7 @@
     ],
     "n": 3
   },
-  "flags:none;fee:paid;visa:std;q:o;m1;b1": {
+  "flags:none;fee:paid;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.777778,
@@ -413,7 +413,7 @@
     ],
     "n": 3
   },
-  "flags:none;fee:paid;visa:std;q:o;m2;b0": {
+  "flags:none;fee:paid;visa:std;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.714286,
@@ -422,7 +422,7 @@
     ],
     "n": 2
   },
-  "flags:none;fee:paid;visa:std;q:o;m2;b1": {
+  "flags:none;fee:paid;visa:std;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 0.5,
     "dist": [
       0.428571,
@@ -431,7 +431,7 @@
     ],
     "n": 2
   },
-  "flags:none;fee:paid;visa:std;q:t;m0;b0": {
+  "flags:none;fee:paid;visa:std;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.214286,
     "dist": [
       0.652174,
@@ -440,7 +440,7 @@
     ],
     "n": 56
   },
-  "flags:none;fee:waived;visa:dip;q:o;m0;b0": {
+  "flags:none;fee:waived;visa:dip;q:o;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.666667,
     "dist": [
       0.111111,
@@ -449,7 +449,7 @@
     ],
     "n": 3
   },
-  "flags:none;fee:waived;visa:dip;q:o;m0;b1": {
+  "flags:none;fee:waived;visa:dip;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.846154,
@@ -458,7 +458,7 @@
     ],
     "n": 5
   },
-  "flags:none;fee:waived;visa:dip;q:o;m1;b0": {
+  "flags:none;fee:waived;visa:dip;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -467,7 +467,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:waived;visa:dip;q:o;m1;b1": {
+  "flags:none;fee:waived;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -476,7 +476,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:waived;visa:dip;q:o;m2;b0": {
+  "flags:none;fee:waived;visa:dip;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.714286,
@@ -485,7 +485,7 @@
     ],
     "n": 2
   },
-  "flags:none;fee:waived;visa:dip;q:o;m2;b1": {
+  "flags:none;fee:waived;visa:dip;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -494,7 +494,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:waived;visa:dip;q:t;m0;b0": {
+  "flags:none;fee:waived;visa:dip;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.73913,
@@ -503,7 +503,7 @@
     ],
     "n": 10
   },
-  "flags:none;fee:waived;visa:std;q:o;m0;b0": {
+  "flags:none;fee:waived;visa:std;q:o;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.25,
     "dist": [
       0.481481,
@@ -512,7 +512,7 @@
     ],
     "n": 12
   },
-  "flags:none;fee:waived;visa:std;q:o;m0;b1": {
+  "flags:none;fee:waived;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 0.4,
     "dist": [
       0.652174,
@@ -521,7 +521,7 @@
     ],
     "n": 10
   },
-  "flags:none;fee:waived;visa:std;q:o;m1;b0": {
+  "flags:none;fee:waived;visa:std;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.2,
@@ -530,7 +530,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:waived;visa:std;q:o;m1;b1": {
+  "flags:none;fee:waived;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.666667,
     "dist": [
       0.333333,
@@ -539,7 +539,7 @@
     ],
     "n": 3
   },
-  "flags:none;fee:waived;visa:std;q:o;m2;b0": {
+  "flags:none;fee:waived;visa:std;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -548,7 +548,7 @@
     ],
     "n": 1
   },
-  "flags:none;fee:waived;visa:std;q:t;m0;b0": {
+  "flags:none;fee:waived;visa:std;q:t;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.333333,
     "dist": [
       0.454545,
@@ -557,7 +557,7 @@
     ],
     "n": 15
   },
-  "flags:rescinded_denial;fee:paid;visa:dip;q:o;m0;b1": {
+  "flags:rescinded_denial;fee:paid;visa:dip;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -566,7 +566,7 @@
     ],
     "n": 1
   },
-  "flags:rescinded_denial;fee:paid;visa:std;q:o;m0;b1": {
+  "flags:rescinded_denial;fee:paid;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -575,7 +575,7 @@
     ],
     "n": 1
   },
-  "flags:rescinded_denial|sponsor_mismatch;fee:missing;visa:std;q:o;m1;b1": {
+  "flags:rescinded_denial|sponsor_mismatch;fee:missing;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -584,7 +584,7 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1;b0": {
+  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.2,
@@ -593,7 +593,7 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1;b1": {
+  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -602,7 +602,7 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m1;b1": {
+  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -611,7 +611,7 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m2;b1": {
+  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -620,7 +620,7 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:waived;visa:dip;q:o;m0;b0": {
+  "flags:sponsor_mismatch;fee:waived;visa:dip;q:o;m0;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -629,7 +629,7 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:waived;visa:std;q:o;m0;b1": {
+  "flags:sponsor_mismatch;fee:waived;visa:std;q:o;m0;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -647,7 +647,7 @@
     ],
     "n": 23
   },
-  "nodate;q:o;m1;b1": {
+  "nodate;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.666667,
     "dist": [
       0.333333,
@@ -656,7 +656,7 @@
     ],
     "n": 3
   },
-  "nodate;q:o;m2;b0": {
+  "nodate;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.625,
     "dist": [
       0.263158,
@@ -665,7 +665,7 @@
     ],
     "n": 8
   },
-  "nodate;q:o;m2;b1": {
+  "nodate;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 0.545455,
     "dist": [
       0.36,
@@ -674,7 +674,7 @@
     ],
     "n": 11
   },
-  "nodate;q:u;m2;b0": {
+  "nodate;q:u;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -683,7 +683,7 @@
     ],
     "n": 1
   },
-  "nosponsor;q:o;m1;b0": {
+  "nosponsor;q:o;m1;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -692,7 +692,7 @@
     ],
     "n": 1
   },
-  "nosponsor;q:o;m1;b1": {
+  "nosponsor;q:o;m1;b1;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.714286,
@@ -701,7 +701,7 @@
     ],
     "n": 2
   },
-  "nosponsor;q:o;m2;b0": {
+  "nosponsor;q:o;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.35,
     "dist": [
       0.253012,
@@ -710,7 +710,7 @@
     ],
     "n": 40
   },
-  "nosponsor;q:o;m2;b1": {
+  "nosponsor;q:o;m2;b1;g0": {
     "decided_label_cv_accuracy": 0.1,
     "dist": [
       0.395349,
@@ -719,7 +719,7 @@
     ],
     "n": 20
   },
-  "nosponsor;q:u;m2;b0": {
+  "nosponsor;q:u;m2;b0;g0": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.2,
@@ -728,7 +728,7 @@
     ],
     "n": 1
   },
-  "nosponsor;q:u;m2;b1": {
+  "nosponsor;q:u;m2;b1;g0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.142857,
@@ -764,6 +764,15 @@
     ],
     "n": 86
   },
+  "regembargo": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.142857,
+      0.714286,
+      0.142857
+    ],
+    "n": 2
+  },
   "revoked": {
     "decided_label_cv_accuracy": 0.963636,
     "dist": [
@@ -792,12 +801,12 @@
     "n": 31
   },
   "unpaid": {
-    "decided_label_cv_accuracy": 0.882353,
+    "decided_label_cv_accuracy": 0.878788,
     "dist": [
-      0.042254,
-      0.859155,
-      0.098592
+      0.043478,
+      0.855072,
+      0.101449
     ],
-    "n": 34
+    "n": 33
   }
 }

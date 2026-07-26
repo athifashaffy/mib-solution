@@ -47,6 +47,7 @@ def process_one(pdf_path_str):
                 "saw_observed_flags": ev.saw_observed_flags,
                 "doc_types_seen": sorted(ev.doc_types_seen),
                 "bio_confidence": ev.bio_confidence,
+                "unknown_content_pages": ev.unknown_content_pages,
                 "foreign_pages": ev.foreign_pages,
             },
             "error": None,

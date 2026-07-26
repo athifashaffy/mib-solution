@@ -55,6 +55,7 @@ def record_from_row(row) -> CaseRecord:
         saw_observed_flags=ev.get("saw_observed_flags", False),
         doc_types_seen=set(ev.get("doc_types_seen", [])),
         bio_confidence=ev.get("bio_confidence"),
+        unknown_content_pages=ev.get("unknown_content_pages", 0),
         foreign_pages=ev.get("foreign_pages", 0),
     )
     return CaseRecord(fields=row.get("fields") or {}, evidence=evidence,

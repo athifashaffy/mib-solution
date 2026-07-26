@@ -84,6 +84,13 @@ def path_of(record) -> RulePath:
     if flags & DISQUALIFYING_FLAGS:
         return RulePath("disq", _ONE_HOT["DENIED"])
 
+    status = (evidence.registry_status or "")
+    if "EMBARGO" in status:
+        # Registry machine text flags an embargo review (30 DENIED / 2
+        # NEEDS_REVIEW / 0 APPROVED on train, n=32). Learned distribution
+        # decides; zero observed false-approval risk.
+        return RulePath("regembargo", None)
+
     if visa == "TRANSIT-7":
         return RulePath("transit", _ONE_HOT["DENIED"])
 
@@ -139,7 +146,10 @@ def _quality_suffix(record) -> str:
     # reading is a different risk class than one whose slip said "none" —
     # missed disqualifying flags hide in exactly these packets.
     b = "b1" if evidence.saw_observed_flags else "b0"
-    return f"q:{q};{m};{b}"
+    # Destroyed-content pages: a packet with pages too damaged to classify is
+    # a different risk class than a genuinely sparse packet.
+    g = "g1" if evidence.unknown_content_pages > 0 else "g0"
+    return f"q:{q};{m};{b};{g}"
 
 
 _QUALITY_FIELDS = (

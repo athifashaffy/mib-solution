@@ -63,6 +63,10 @@ class EvidenceSummary:
     doc_types_seen: set = field(default_factory=set)
     # Raw "Biometric confidence" value from the slip (e.g. "86%"), if any.
     bio_confidence: str | None = None
+    # Image-only pages whose OCR parsed to no recognizable doc type: content
+    # pages destroyed beyond classification (distinct from unreadable_pages,
+    # which counts pages whose OCR produced almost no text at all).
+    unknown_content_pages: int = 0
     # Pages discarded because their own Case ID belongs to another case.
     foreign_pages: int = 0
 
@@ -427,6 +431,7 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
     has_image_only = False
     ocr_used = False
     unreadable_pages = 0
+    unknown_content_pages = 0
     doc_types_seen: set = set()
     foreign_pages = 0
 
