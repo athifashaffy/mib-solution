@@ -2,11 +2,11 @@
   "disq": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.006803,
-      0.986395,
-      0.006803
+      0.006623,
+      0.986755,
+      0.006623
     ],
-    "n": 72
+    "n": 74
   },
   "feeunk": {
     "decided_label_cv_accuracy": 0.965517,
@@ -17,7 +17,7 @@
     ],
     "n": 29
   },
-  "flags:identity_conflict;fee:missing;visa:dip;q:o;m1": {
+  "flags:identity_conflict;fee:missing;visa:dip;q:o;m1;b1": {
     "decided_label_cv_accuracy": 0.5,
     "dist": [
       0.428571,
@@ -26,7 +26,7 @@
     ],
     "n": 2
   },
-  "flags:identity_conflict;fee:missing;visa:dip;q:u;m1": {
+  "flags:identity_conflict;fee:missing;visa:dip;q:u;m1;b1": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -35,367 +35,52 @@
     ],
     "n": 1
   },
-  "flags:identity_conflict;fee:missing;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 0.5,
+  "flags:identity_conflict;fee:missing;visa:std;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.75,
     "dist": [
-      0.333333,
-      0.2,
-      0.466667
-    ],
-    "n": 6
-  },
-  "flags:identity_conflict;fee:missing;visa:std;q:u;m1": {
-    "decided_label_cv_accuracy": 0.0,
-    "dist": [
-      0.6,
-      0.2,
-      0.2
-    ],
-    "n": 1
-  },
-  "flags:identity_conflict;fee:paid;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:identity_conflict;fee:paid;visa:dip;q:t;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.111111,
-      0.111111,
-      0.777778
-    ],
-    "n": 3
-  },
-  "flags:identity_conflict;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.8,
-    "dist": [
-      0.076923,
-      0.230769,
-      0.692308
-    ],
-    "n": 5
-  },
-  "flags:identity_conflict;fee:paid;visa:std;q:t;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:identity_conflict;fee:waived;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.0,
-    "dist": [
-      0.142857,
-      0.428571,
-      0.428571
-    ],
-    "n": 2
-  },
-  "flags:identity_conflict;fee:waived;visa:std;q:t;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.111111,
-      0.111111,
-      0.777778
-    ],
-    "n": 3
-  },
-  "flags:identity_conflict|illegible_biometrics;fee:missing;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:identity_conflict|illegible_biometrics;fee:paid;visa:std;q:u;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:identity_conflict|illegible_biometrics;fee:waived;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:identity_conflict|rescinded_denial;fee:paid;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 0.0,
-    "dist": [
-      0.2,
-      0.6,
-      0.2
-    ],
-    "n": 1
-  },
-  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
+      0.272727,
       0.090909,
-      0.090909,
-      0.818182
+      0.636364
     ],
     "n": 4
   },
-  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m2": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.142857,
-      0.142857,
-      0.714286
-    ],
-    "n": 2
-  },
-  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.111111,
-      0.111111,
-      0.777778
-    ],
-    "n": 3
-  },
-  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:illegible_biometrics;fee:waived;visa:dip;q:o;m1": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:illegible_biometrics;fee:waived;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:illegible_biometrics|rescinded_denial;fee:missing;visa:dip;q:o;m1": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:illegible_biometrics|rescinded_denial;fee:paid;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:illegible_biometrics|sponsor_mismatch;fee:waived;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:none;fee:missing;visa:dip;q:o;m1": {
-    "decided_label_cv_accuracy": 0.388889,
-    "dist": [
-      0.589744,
-      0.230769,
-      0.179487
-    ],
-    "n": 18
-  },
-  "flags:none;fee:missing;visa:dip;q:o;m2": {
-    "decided_label_cv_accuracy": 0.222222,
-    "dist": [
-      0.52381,
-      0.238095,
-      0.238095
-    ],
-    "n": 9
-  },
-  "flags:none;fee:missing;visa:dip;q:u;m2": {
+  "flags:identity_conflict;fee:missing;visa:std;q:o;m1;b1": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.428571,
-      0.142857,
-      0.428571
-    ],
-    "n": 2
-  },
-  "flags:none;fee:missing;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 0.219512,
-    "dist": [
-      0.529412,
-      0.223529,
-      0.247059
-    ],
-    "n": 41
-  },
-  "flags:none;fee:missing;visa:std;q:o;m2": {
-    "decided_label_cv_accuracy": 0.428571,
-    "dist": [
-      0.354839,
-      0.225806,
-      0.419355
-    ],
-    "n": 14
-  },
-  "flags:none;fee:missing;visa:std;q:u;m1": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:none;fee:missing;visa:std;q:u;m2": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:none;fee:paid;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 0.785714,
-    "dist": [
-      0.741935,
-      0.032258,
-      0.225806
-    ],
-    "n": 14
-  },
-  "flags:none;fee:paid;visa:dip;q:o;m1": {
-    "decided_label_cv_accuracy": 0.25,
-    "dist": [
-      0.454545,
-      0.090909,
-      0.454545
-    ],
-    "n": 4
-  },
-  "flags:none;fee:paid;visa:dip;q:t;m0": {
-    "decided_label_cv_accuracy": 0.727273,
-    "dist": [
-      0.702128,
-      0.021277,
-      0.276596
-    ],
-    "n": 22
-  },
-  "flags:none;fee:paid;visa:dip;q:u;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.714286,
-      0.142857,
+      0.428571,
       0.142857
     ],
     "n": 2
   },
-  "flags:none;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.59375,
-    "dist": [
-      0.58209,
-      0.253731,
-      0.164179
-    ],
-    "n": 32
-  },
-  "flags:none;fee:paid;visa:std;q:o;m1": {
-    "decided_label_cv_accuracy": 0.2,
-    "dist": [
-      0.538462,
-      0.230769,
-      0.230769
-    ],
-    "n": 5
-  },
-  "flags:none;fee:paid;visa:std;q:t;m0": {
-    "decided_label_cv_accuracy": 0.660714,
-    "dist": [
-      0.652174,
-      0.165217,
-      0.182609
-    ],
-    "n": 56
-  },
-  "flags:none;fee:paid;visa:std;q:u;m0": {
-    "decided_label_cv_accuracy": 0.25,
-    "dist": [
-      0.636364,
-      0.272727,
-      0.090909
-    ],
-    "n": 4
-  },
-  "flags:none;fee:waived;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 0.222222,
-    "dist": [
-      0.52381,
-      0.142857,
-      0.333333
-    ],
-    "n": 9
-  },
-  "flags:none;fee:waived;visa:dip;q:o;m2": {
+  "flags:identity_conflict;fee:missing;visa:std;q:u;m1;b1": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
-      0.2,
       0.6,
+      0.2,
       0.2
     ],
     "n": 1
   },
-  "flags:none;fee:waived;visa:dip;q:t;m0": {
-    "decided_label_cv_accuracy": 0.8,
+  "flags:identity_conflict;fee:paid;visa:dip;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.73913,
-      0.217391,
-      0.043478
+      0.2,
+      0.2,
+      0.6
     ],
-    "n": 10
+    "n": 1
   },
-  "flags:none;fee:waived;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 0.272727,
+  "flags:identity_conflict;fee:paid;visa:dip;q:t;m0;b0": {
+    "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.531915,
-      0.234043,
-      0.234043
+      0.111111,
+      0.111111,
+      0.777778
     ],
-    "n": 22
+    "n": 3
   },
-  "flags:none;fee:waived;visa:std;q:o;m1": {
+  "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b0": {
     "decided_label_cv_accuracy": 0.666667,
     "dist": [
       0.111111,
@@ -404,52 +89,16 @@
     ],
     "n": 3
   },
-  "flags:none;fee:waived;visa:std;q:t;m0": {
-    "decided_label_cv_accuracy": 0.333333,
-    "dist": [
-      0.454545,
-      0.212121,
-      0.333333
-    ],
-    "n": 15
-  },
-  "flags:rescinded_denial;fee:missing;visa:std;q:o;m1": {
+  "flags:identity_conflict;fee:paid;visa:std;q:o;m0;b1": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:rescinded_denial;fee:paid;visa:dip;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:rescinded_denial;fee:paid;visa:std;q:o;m0": {
-    "decided_label_cv_accuracy": 1.0,
-    "dist": [
-      0.2,
-      0.2,
-      0.6
-    ],
-    "n": 1
-  },
-  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1": {
-    "decided_label_cv_accuracy": 0.0,
-    "dist": [
-      0.428571,
-      0.428571,
-      0.142857
+      0.142857,
+      0.142857,
+      0.714286
     ],
     "n": 2
   },
-  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m2": {
+  "flags:identity_conflict;fee:paid;visa:std;q:t;m0;b0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -458,7 +107,25 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m1": {
+  "flags:identity_conflict;fee:waived;visa:std;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.2,
+      0.6,
+      0.2
+    ],
+    "n": 1
+  },
+  "flags:identity_conflict;fee:waived;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:identity_conflict;fee:waived;visa:std;q:t;m0;b0": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.111111,
@@ -467,7 +134,7 @@
     ],
     "n": 3
   },
-  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m2": {
+  "flags:identity_conflict|illegible_biometrics;fee:missing;visa:std;q:o;m1;b1": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -476,7 +143,475 @@
     ],
     "n": 1
   },
-  "flags:sponsor_mismatch;fee:waived;visa:std;q:o;m0": {
+  "flags:identity_conflict|illegible_biometrics;fee:paid;visa:std;q:u;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:identity_conflict|illegible_biometrics;fee:waived;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:identity_conflict|rescinded_denial;fee:paid;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.2,
+      0.6,
+      0.2
+    ],
+    "n": 1
+  },
+  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.090909,
+      0.090909,
+      0.818182
+    ],
+    "n": 4
+  },
+  "flags:illegible_biometrics;fee:missing;visa:std;q:o;m2;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.142857,
+      0.142857,
+      0.714286
+    ],
+    "n": 2
+  },
+  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.111111,
+      0.111111,
+      0.777778
+    ],
+    "n": 3
+  },
+  "flags:illegible_biometrics;fee:paid;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:illegible_biometrics;fee:waived;visa:dip;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:illegible_biometrics;fee:waived;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:illegible_biometrics|rescinded_denial;fee:missing;visa:dip;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:illegible_biometrics|rescinded_denial;fee:paid;visa:dip;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:illegible_biometrics|sponsor_mismatch;fee:waived;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:none;fee:missing;visa:dip;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.125,
+    "dist": [
+      0.368421,
+      0.368421,
+      0.263158
+    ],
+    "n": 8
+  },
+  "flags:none;fee:missing;visa:dip;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 0.8,
+    "dist": [
+      0.73913,
+      0.130435,
+      0.130435
+    ],
+    "n": 10
+  },
+  "flags:none;fee:missing;visa:dip;q:o;m2;b0": {
+    "decided_label_cv_accuracy": 0.25,
+    "dist": [
+      0.473684,
+      0.263158,
+      0.263158
+    ],
+    "n": 8
+  },
+  "flags:none;fee:missing;visa:dip;q:o;m2;b1": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.6,
+      0.2,
+      0.2
+    ],
+    "n": 1
+  },
+  "flags:none;fee:missing;visa:dip;q:u;m2;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.428571,
+      0.142857,
+      0.428571
+    ],
+    "n": 2
+  },
+  "flags:none;fee:missing;visa:std;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.304348,
+    "dist": [
+      0.428571,
+      0.265306,
+      0.306122
+    ],
+    "n": 23
+  },
+  "flags:none;fee:missing;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 0.333333,
+    "dist": [
+      0.641026,
+      0.179487,
+      0.179487
+    ],
+    "n": 18
+  },
+  "flags:none;fee:missing;visa:std;q:o;m2;b0": {
+    "decided_label_cv_accuracy": 0.454545,
+    "dist": [
+      0.28,
+      0.28,
+      0.44
+    ],
+    "n": 11
+  },
+  "flags:none;fee:missing;visa:std;q:o;m2;b1": {
+    "decided_label_cv_accuracy": 0.333333,
+    "dist": [
+      0.555556,
+      0.111111,
+      0.333333
+    ],
+    "n": 3
+  },
+  "flags:none;fee:missing;visa:std;q:u;m1;b0": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:none;fee:missing;visa:std;q:u;m2;b0": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:none;fee:paid;visa:dip;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 0.428571,
+    "dist": [
+      0.529412,
+      0.058824,
+      0.411765
+    ],
+    "n": 7
+  },
+  "flags:none;fee:paid;visa:dip;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.882353,
+      0.058824,
+      0.058824
+    ],
+    "n": 7
+  },
+  "flags:none;fee:paid;visa:dip;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.142857,
+      0.142857,
+      0.714286
+    ],
+    "n": 2
+  },
+  "flags:none;fee:paid;visa:dip;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.714286,
+      0.142857,
+      0.142857
+    ],
+    "n": 2
+  },
+  "flags:none;fee:paid;visa:dip;q:t;m0;b0": {
+    "decided_label_cv_accuracy": 0.727273,
+    "dist": [
+      0.702128,
+      0.021277,
+      0.276596
+    ],
+    "n": 22
+  },
+  "flags:none;fee:paid;visa:dip;q:u;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.714286,
+      0.142857,
+      0.142857
+    ],
+    "n": 2
+  },
+  "flags:none;fee:paid;visa:std;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 0.2,
+    "dist": [
+      0.44186,
+      0.348837,
+      0.209302
+    ],
+    "n": 20
+  },
+  "flags:none;fee:paid;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 0.909091,
+    "dist": [
+      0.84,
+      0.04,
+      0.12
+    ],
+    "n": 11
+  },
+  "flags:none;fee:paid;visa:std;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.5,
+    "dist": [
+      0.142857,
+      0.428571,
+      0.428571
+    ],
+    "n": 2
+  },
+  "flags:none;fee:paid;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.777778,
+      0.111111,
+      0.111111
+    ],
+    "n": 3
+  },
+  "flags:none;fee:paid;visa:std;q:t;m0;b0": {
+    "decided_label_cv_accuracy": 0.660714,
+    "dist": [
+      0.652174,
+      0.165217,
+      0.182609
+    ],
+    "n": 56
+  },
+  "flags:none;fee:paid;visa:std;q:u;m0;b0": {
+    "decided_label_cv_accuracy": 0.25,
+    "dist": [
+      0.636364,
+      0.272727,
+      0.090909
+    ],
+    "n": 4
+  },
+  "flags:none;fee:waived;visa:dip;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 0.75,
+    "dist": [
+      0.090909,
+      0.272727,
+      0.636364
+    ],
+    "n": 4
+  },
+  "flags:none;fee:waived;visa:dip;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.846154,
+      0.076923,
+      0.076923
+    ],
+    "n": 5
+  },
+  "flags:none;fee:waived;visa:dip;q:o;m2;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.2,
+      0.6,
+      0.2
+    ],
+    "n": 1
+  },
+  "flags:none;fee:waived;visa:dip;q:t;m0;b0": {
+    "decided_label_cv_accuracy": 0.8,
+    "dist": [
+      0.73913,
+      0.217391,
+      0.043478
+    ],
+    "n": 10
+  },
+  "flags:none;fee:waived;visa:std;q:o;m0;b0": {
+    "decided_label_cv_accuracy": 0.166667,
+    "dist": [
+      0.407407,
+      0.259259,
+      0.333333
+    ],
+    "n": 12
+  },
+  "flags:none;fee:waived;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 0.777778,
+    "dist": [
+      0.714286,
+      0.142857,
+      0.142857
+    ],
+    "n": 9
+  },
+  "flags:none;fee:waived;visa:std;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.142857,
+      0.428571,
+      0.428571
+    ],
+    "n": 2
+  },
+  "flags:none;fee:waived;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:none;fee:waived;visa:std;q:t;m0;b0": {
+    "decided_label_cv_accuracy": 0.333333,
+    "dist": [
+      0.454545,
+      0.212121,
+      0.333333
+    ],
+    "n": 15
+  },
+  "flags:rescinded_denial;fee:missing;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:rescinded_denial;fee:paid;visa:dip;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:rescinded_denial;fee:paid;visa:std;q:o;m0;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.428571,
+      0.428571,
+      0.142857
+    ],
+    "n": 2
+  },
+  "flags:sponsor_mismatch;fee:missing;visa:dip;q:o;m2;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.142857,
+      0.142857,
+      0.714286
+    ],
+    "n": 2
+  },
+  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:sponsor_mismatch;fee:missing;visa:std;q:o;m2;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.2,
+      0.2,
+      0.6
+    ],
+    "n": 1
+  },
+  "flags:sponsor_mismatch;fee:waived;visa:std;q:o;m0;b1": {
     "decided_label_cv_accuracy": 1.0,
     "dist": [
       0.2,
@@ -494,34 +629,52 @@
     ],
     "n": 27
   },
-  "nodate;q:o;m1": {
+  "nodate;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.0,
+    "dist": [
+      0.2,
+      0.6,
+      0.2
+    ],
+    "n": 1
+  },
+  "nodate;q:o;m1;b1": {
+    "decided_label_cv_accuracy": 1.0,
+    "dist": [
+      0.142857,
+      0.142857,
+      0.714286
+    ],
+    "n": 2
+  },
+  "nodate;q:o;m2;b0": {
+    "decided_label_cv_accuracy": 0.230769,
+    "dist": [
+      0.517241,
+      0.241379,
+      0.241379
+    ],
+    "n": 13
+  },
+  "nodate;q:o;m2;b1": {
     "decided_label_cv_accuracy": 0.666667,
     "dist": [
-      0.111111,
+      0.238095,
+      0.142857,
+      0.619048
+    ],
+    "n": 9
+  },
+  "nodate;q:u;m2;b0": {
+    "decided_label_cv_accuracy": 0.666667,
+    "dist": [
       0.333333,
+      0.111111,
       0.555556
     ],
     "n": 3
   },
-  "nodate;q:o;m2": {
-    "decided_label_cv_accuracy": 0.409091,
-    "dist": [
-      0.404255,
-      0.191489,
-      0.404255
-    ],
-    "n": 22
-  },
-  "nodate;q:u;m2": {
-    "decided_label_cv_accuracy": 0.5,
-    "dist": [
-      0.454545,
-      0.090909,
-      0.454545
-    ],
-    "n": 4
-  },
-  "nosponsor;q:o;m1": {
+  "nodate;q:u;m2;b1": {
     "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.6,
@@ -530,23 +683,50 @@
     ],
     "n": 1
   },
-  "nosponsor;q:o;m2": {
-    "decided_label_cv_accuracy": 0.268293,
+  "nosponsor;q:o;m1;b0": {
+    "decided_label_cv_accuracy": 0.0,
     "dist": [
-      0.301205,
-      0.413655,
-      0.285141
+      0.6,
+      0.2,
+      0.2
     ],
-    "n": 123
+    "n": 1
   },
-  "nosponsor;q:u;m2": {
-    "decided_label_cv_accuracy": 0.4,
+  "nosponsor;q:o;m2;b0": {
+    "decided_label_cv_accuracy": 0.367816,
     "dist": [
-      0.333333,
-      0.272727,
-      0.393939
+      0.276836,
+      0.457627,
+      0.265537
     ],
-    "n": 15
+    "n": 87
+  },
+  "nosponsor;q:o;m2;b1": {
+    "decided_label_cv_accuracy": 0.333333,
+    "dist": [
+      0.36,
+      0.306667,
+      0.333333
+    ],
+    "n": 36
+  },
+  "nosponsor;q:u;m2;b0": {
+    "decided_label_cv_accuracy": 0.363636,
+    "dist": [
+      0.36,
+      0.28,
+      0.36
+    ],
+    "n": 11
+  },
+  "nosponsor;q:u;m2;b1": {
+    "decided_label_cv_accuracy": 0.5,
+    "dist": [
+      0.272727,
+      0.272727,
+      0.454545
+    ],
+    "n": 4
   },
   "note:APPROVED": {
     "decided_label_cv_accuracy": 1.0,

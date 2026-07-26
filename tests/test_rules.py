@@ -103,7 +103,7 @@ def test_fee_missing_is_not_deterministic():
     rp = path_of(rec)
     assert rp.dist is None
     assert "fee:missing" in rp.path_id
-    assert rp.path_id.endswith("m1")
+    assert ";m1;" in rp.path_id
 
 
 def test_revoked_sponsor_denies_for_non_dip():
@@ -174,14 +174,14 @@ def test_clean_case_gets_empirical_path():
     rec = make_record()
     rp = path_of(rec)
     assert rp.dist is None
-    assert rp.path_id == "flags:none;fee:paid;visa:std;q:t;m0"
+    assert rp.path_id == "flags:none;fee:paid;visa:std;q:t;m0;b0"
 
 
 def test_review_flags_go_to_empirical_path():
     rec = make_record(risk_flags={"illegible_biometrics"})
     rp = path_of(rec)
     assert rp.dist is None
-    assert rp.path_id == "flags:illegible_biometrics;fee:paid;visa:std;q:t;m0"
+    assert rp.path_id == "flags:illegible_biometrics;fee:paid;visa:std;q:t;m0;b0"
 
 
 def test_flag_profile_is_sorted_in_path_id():

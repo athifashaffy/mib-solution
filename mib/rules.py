@@ -133,7 +133,12 @@ def _quality_suffix(record) -> str:
         q = "t"  # pure text-layer case
     missing = sum(1 for name in _QUALITY_FIELDS if record.fields.get(name) is None)
     m = "m0" if missing == 0 else ("m1" if missing == 1 else "m2")
-    return f"q:{q};{m}"
+    # Whether any biometric observed-flags reading was recovered at all
+    # (even an explicit "none"). A packet with no recoverable biometric
+    # reading is a different risk class than one whose slip said "none" —
+    # missed disqualifying flags hide in exactly these packets.
+    b = "b1" if evidence.saw_observed_flags else "b0"
+    return f"q:{q};{m};{b}"
 
 
 _QUALITY_FIELDS = (

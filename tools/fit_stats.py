@@ -52,6 +52,7 @@ def record_from_row(row) -> CaseRecord:
         ocr_used=ev.get("ocr_used", False),
         hidden_only_fields=set(ev.get("hidden_only_fields", [])),
         unreadable_pages=ev.get("unreadable_pages", 0),
+        saw_observed_flags=ev.get("saw_observed_flags", False),
     )
     return CaseRecord(fields=row.get("fields") or {}, evidence=evidence,
                       risk_flags=set(row.get("risk_flags", [])))

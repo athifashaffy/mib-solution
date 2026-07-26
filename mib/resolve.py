@@ -54,6 +54,10 @@ class EvidenceSummary:
     ocr_used: bool = False
     hidden_only_fields: set = field(default_factory=set)
     unreadable_pages: int = 0
+    # True iff ANY observed-flags evidence line was parsed (even "none").
+    # False means the packet's biometric reading is entirely absent, which
+    # is a materially different risk situation than a slip that said "none".
+    saw_observed_flags: bool = False
 
 
 @dataclass
@@ -295,6 +299,16 @@ def _resolve_observed_flags(evidences: list) -> set:
             snapped = vocab.snap(token, "flag")
             if snapped is not None:
                 flags.add(snapped)
+                continue
+            # OCR often appends garbage to a real flag on the same
+            # comma-separated part ("biohazard_red $b ane Yo"). Salvage by
+            # snapping each whitespace word individually; short noise words
+            # can't reach any flag within the snap threshold, so this never
+            # invents a flag that isn't closely present.
+            for word in token.split():
+                word_snapped = vocab.snap(word, "flag")
+                if word_snapped is not None:
+                    flags.add(word_snapped)
     return flags
 
 
@@ -373,6 +387,7 @@ def resolve_case(doc) -> CaseRecord:
         ocr_used=ocr_used,
         hidden_only_fields=_hidden_only_fields(doc, resolved_fields),
         unreadable_pages=unreadable_pages,
+        saw_observed_flags=bool(all_fields.get("observed_flags")),
     )
 
     risk_flags = observed_flags | conflicts

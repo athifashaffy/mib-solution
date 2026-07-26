@@ -44,6 +44,7 @@ def process_one(pdf_path_str):
                 "ocr_used": ev.ocr_used,
                 "hidden_only_fields": sorted(ev.hidden_only_fields),
                 "unreadable_pages": ev.unreadable_pages,
+                "saw_observed_flags": ev.saw_observed_flags,
             },
             "error": None,
         }
