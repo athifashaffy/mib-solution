@@ -19,6 +19,14 @@ from pathlib import Path
 CONF_MIN = 0.05
 CONF_MAX = 0.99
 
+# Catastrophic-false-approval guard: even when expected points favor
+# APPROVED, refuse to approve while the path's denial probability exceeds
+# this ceiling and hedge to NEEDS_REVIEW instead. The challenge tie-breakers
+# rank catastrophic false-approval count explicitly and the interview bar
+# requires "no catastrophic false-approval pattern", both of which price
+# false approvals beyond the -4 raw points the expected-value math sees.
+FA_GUARD_MAX_PD = 0.15
+
 _LABELS = ("APPROVED", "DENIED", "NEEDS_REVIEW")
 
 _STATS_PATH = Path(__file__).resolve().parent / "data" / "policy_stats.json"
@@ -75,6 +83,11 @@ def decide(rule_path, stats=None) -> tuple:
             adjudication = _LABELS[idx]
             break
 
+    if adjudication == "APPROVED" and dist[1] > FA_GUARD_MAX_PD:
+        adjudication = "NEEDS_REVIEW"
+
+    # tools/fit_stats.py applies the same guard when measuring out-of-fold
+    # accuracy, so the stored accuracy describes the guarded decision too.
     if entry is not None and entry.get("decided_label_cv_accuracy") is not None:
         confidence = entry["decided_label_cv_accuracy"]
     else:

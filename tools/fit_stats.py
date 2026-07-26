@@ -26,7 +26,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from mib.decide import expected_points
+from mib.decide import FA_GUARD_MAX_PD, expected_points
 from mib.resolve import CaseRecord, EvidenceSummary
 from mib.rules import path_of
 
@@ -68,8 +68,15 @@ def decide_label(dist) -> str:
     best = max(scores)
     for idx in (2, 1, 0):
         if scores[idx] == best:
-            return LABELS3[idx]
-    raise AssertionError
+            label = LABELS3[idx]
+            break
+    else:
+        raise AssertionError
+    # Mirror mib.decide's catastrophic-false-approval guard so the stored
+    # out-of-fold accuracies describe the decisions actually emitted.
+    if label == "APPROVED" and dist[1] > FA_GUARD_MAX_PD:
+        label = "NEEDS_REVIEW"
+    return label
 
 
 def main():

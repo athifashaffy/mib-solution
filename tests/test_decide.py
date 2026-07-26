@@ -65,3 +65,24 @@ def test_tie_prefers_needs_review():
                                                 "n": 10,
                                                 "decided_label_cv_accuracy": 0.5}})
     assert adj == "DENIED"
+
+
+def test_fa_guard_demotes_risky_approval():
+    from mib.rules import RulePath
+    from mib.decide import decide
+    # E[A] = 8*0.75 - 4*0.2 + 0.05 = 5.25 beats E[R] = 0.4 + 1.9 = 2.3,
+    # but pD=0.20 > 0.15 guard ceiling -> hedged to NEEDS_REVIEW.
+    rp = RulePath("x", None)
+    adj, conf = decide(rp, stats={"x": {"dist": [0.75, 0.20, 0.05], "n": 40,
+                                        "decided_label_cv_accuracy": None}})
+    assert adj == "NEEDS_REVIEW"
+
+
+def test_fa_guard_allows_low_risk_approval():
+    from mib.rules import RulePath
+    from mib.decide import decide
+    rp = RulePath("x", None)
+    adj, conf = decide(rp, stats={"x": {"dist": [0.9, 0.04, 0.06], "n": 50,
+                                        "decided_label_cv_accuracy": 0.9}})
+    assert adj == "APPROVED"
+    assert conf == 0.9

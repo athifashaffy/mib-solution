@@ -261,7 +261,7 @@
     "n": 8
   },
   "flags:none;fee:missing;visa:dip;q:o;m1;b1": {
-    "decided_label_cv_accuracy": 0.8,
+    "decided_label_cv_accuracy": 0.1,
     "dist": [
       0.73913,
       0.130435,
@@ -288,7 +288,7 @@
     "n": 1
   },
   "flags:none;fee:missing;visa:dip;q:u;m2;b0": {
-    "decided_label_cv_accuracy": 0.0,
+    "decided_label_cv_accuracy": 0.5,
     "dist": [
       0.428571,
       0.142857,
@@ -306,7 +306,7 @@
     "n": 23
   },
   "flags:none;fee:missing;visa:std;q:o;m1;b1": {
-    "decided_label_cv_accuracy": 0.333333,
+    "decided_label_cv_accuracy": 0.055556,
     "dist": [
       0.641026,
       0.179487,
@@ -378,7 +378,7 @@
     "n": 2
   },
   "flags:none;fee:paid;visa:dip;q:o;m1;b1": {
-    "decided_label_cv_accuracy": 1.0,
+    "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.714286,
       0.142857,
@@ -396,7 +396,7 @@
     "n": 22
   },
   "flags:none;fee:paid;visa:dip;q:u;m0;b1": {
-    "decided_label_cv_accuracy": 1.0,
+    "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.714286,
       0.142857,
@@ -441,7 +441,7 @@
     "n": 3
   },
   "flags:none;fee:paid;visa:std;q:t;m0;b0": {
-    "decided_label_cv_accuracy": 0.660714,
+    "decided_label_cv_accuracy": 0.214286,
     "dist": [
       0.652174,
       0.165217,
@@ -450,7 +450,7 @@
     "n": 56
   },
   "flags:none;fee:paid;visa:std;q:u;m0;b0": {
-    "decided_label_cv_accuracy": 0.25,
+    "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.636364,
       0.272727,
@@ -486,7 +486,7 @@
     "n": 1
   },
   "flags:none;fee:waived;visa:dip;q:t;m0;b0": {
-    "decided_label_cv_accuracy": 0.8,
+    "decided_label_cv_accuracy": 0.0,
     "dist": [
       0.73913,
       0.217391,
@@ -495,7 +495,7 @@
     "n": 10
   },
   "flags:none;fee:waived;visa:std;q:o;m0;b0": {
-    "decided_label_cv_accuracy": 0.166667,
+    "decided_label_cv_accuracy": 0.333333,
     "dist": [
       0.407407,
       0.259259,
@@ -504,7 +504,7 @@
     "n": 12
   },
   "flags:none;fee:waived;visa:std;q:o;m0;b1": {
-    "decided_label_cv_accuracy": 0.777778,
+    "decided_label_cv_accuracy": 0.111111,
     "dist": [
       0.714286,
       0.142857,
