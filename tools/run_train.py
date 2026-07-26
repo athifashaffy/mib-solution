@@ -26,11 +26,11 @@ def process_one(pdf_path_str):
         doc = extract_document(pdf_path_str)
         record = resolve_case(doc)
         fields = dict(record.fields)
-        if not fields.get("case_id"):
-            fields["case_id"] = stem
         ev = record.evidence
         return {
-            "case_id": fields["case_id"],
+            # Always the filename stem: it is the packet's active case id and
+            # the only id the scorer accepts. Extracted ids stay in fields.
+            "case_id": stem,
             "fields": fields,
             "risk_flags": sorted(record.risk_flags),
             "evidence": {
