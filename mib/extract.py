@@ -315,3 +315,140 @@ def extract_document(pdf_path) -> DocText:
     finally:
         doc.close()
     return DocText(pages=pages)
+
+
+# ---------------------------------------------------------------------------
+# Anchor-crop re-OCR: second-chance targeted extraction.
+#
+# Forms in this corpus are fixed-layout ("Label: value" or label-above/
+# value-below). When whole-page OCR finds a field's label but the value did
+# not survive, a tight crop around the label re-OCR'd at high DPI with
+# single-line segmentation frequently recovers it. Crops render the page
+# image, so hidden text (white-on-white / alpha-0) stays invisible by
+# construction - this path can never surface untrusted hidden content.
+# ---------------------------------------------------------------------------
+
+ANCHOR_TSV_DPI = 300
+ANCHOR_CROP_DPI = 500
+
+# field -> anchor word(s) that begin its printed label
+FIELD_ANCHOR_WORDS = {
+    "species_code": ("species",),
+    "home_world": ("home",),
+    "visa_class": ("visa",),
+    "sponsor_id": ("sponsor",),
+    "arrival_date": ("arrival",),
+    "declared_purpose": ("declared", "purpose"),
+    "fee_status": ("fee",),
+    "observed_flags": ("observed",),
+}
+
+
+def _word_distance(a: str, b: str) -> int:
+    if a == b:
+        return 0
+    la, lb = len(a), len(b)
+    if abs(la - lb) > 1:
+        return 2
+    prev = list(range(lb + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[lb]
+
+
+def _tesseract_tsv(png_path: str) -> list[tuple[str, float, float, float, float]]:
+    """Run tesseract TSV and return (word, left, top, width, height) rows in
+    rendered-pixel coordinates."""
+    cmd = ["tesseract", png_path, "stdout", "--psm", "11", "-l", "eng", "tsv"]
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, errors="replace",
+            timeout=OCR_TIMEOUT_SECONDS,
+        )
+    except (subprocess.TimeoutExpired, OSError):
+        return []
+    if result.returncode != 0:
+        return []
+    words = []
+    for line in result.stdout.splitlines()[1:]:
+        parts = line.split("\t")
+        if len(parts) < 12 or parts[0] != "5":
+            continue
+        text = parts[11].strip()
+        if not text:
+            continue
+        try:
+            left, top, width, height = (float(parts[6]), float(parts[7]),
+                                        float(parts[8]), float(parts[9]))
+        except ValueError:
+            continue
+        words.append((text, left, top, width, height))
+    return words
+
+
+def _crop_ocr(page: "fitz.Page", rect: "fitz.Rect") -> str:
+    if rect.is_empty or rect.width < 8 or rect.height < 6:
+        return ""
+    fd = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    png_path = fd.name
+    fd.close()
+    try:
+        pix = page.get_pixmap(dpi=ANCHOR_CROP_DPI, colorspace=fitz.csGRAY,
+                              clip=rect)
+        pix.save(png_path)
+        return _run_tesseract(png_path, "7").strip()
+    except Exception:
+        return ""
+    finally:
+        Path(png_path).unlink(missing_ok=True)
+
+
+def anchor_reocr(pdf_path, page_indices, wanted_fields) -> dict:
+    """For each wanted field, locate its label word on the given (image-only)
+    pages via tesseract TSV word boxes and re-OCR value-candidate crops
+    beside/below the label. Returns {field: [raw candidate strings]}."""
+    wanted = {f: FIELD_ANCHOR_WORDS[f] for f in wanted_fields
+              if f in FIELD_ANCHOR_WORDS}
+    if not wanted:
+        return {}
+    out: dict = {f: [] for f in wanted}
+    scale = ANCHOR_TSV_DPI / 72.0
+    doc = fitz.open(pdf_path)
+    try:
+        for idx in page_indices:
+            if idx >= len(doc):
+                continue
+            page = doc[idx]
+            fd = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+            png_path = fd.name
+            fd.close()
+            try:
+                pix = page.get_pixmap(dpi=ANCHOR_TSV_DPI, colorspace=fitz.csGRAY)
+                pix.save(png_path)
+                words = _tesseract_tsv(png_path)
+            except Exception:
+                words = []
+            finally:
+                Path(png_path).unlink(missing_ok=True)
+            for field_name, anchors in wanted.items():
+                for text, left, top, width, height in words:
+                    token = "".join(ch for ch in text.casefold() if ch.isalpha())
+                    if not token or min(
+                        _word_distance(token, a) for a in anchors
+                    ) > 1:
+                        continue
+                    x0, y0 = left / scale, top / scale
+                    x1, y1 = (left + width) / scale, (top + height) / scale
+                    right_strip = fitz.Rect(x1 + 1, y0 - 4, x1 + 230, y1 + 4)
+                    below_strip = fitz.Rect(x0 - 6, y1 + 1, x0 + 190, y1 + 24)
+                    for rect in (right_strip, below_strip):
+                        candidate = _crop_ocr(page, rect & page.rect)
+                        if candidate:
+                            out[field_name].append(candidate)
+                    break  # first matching anchor per field per page
+    finally:
+        doc.close()
+    return {f: v for f, v in out.items() if v}

@@ -39,7 +39,7 @@ def process_pdf(pdf_path: Path, stats) -> dict:
     case_id = pdf_path.stem
     try:
         doc = extract_document(str(pdf_path))
-        record = resolve_case(doc, active_case_id=case_id)
+        record = resolve_case(doc, active_case_id=case_id, pdf_path=str(pdf_path))
         flags = infer_flags(record)
         adjudication, confidence = decide(path_of(record), stats)
         fields = dict(record.fields)

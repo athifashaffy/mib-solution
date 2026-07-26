@@ -24,7 +24,7 @@ def process_one(pdf_path_str):
     stem = pdf_path.stem
     try:
         doc = extract_document(pdf_path_str)
-        record = resolve_case(doc, active_case_id=stem)
+        record = resolve_case(doc, active_case_id=stem, pdf_path=pdf_path_str)
         fields = dict(record.fields)
         ev = record.evidence
         return {

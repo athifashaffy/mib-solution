@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from datetime import date
 
 from mib import vocab
+from mib.extract import anchor_reocr
 from mib.parse import parse_page
 
 # --- data shapes ------------------------------------------------------------
@@ -411,7 +412,8 @@ def _is_real_date(value: str) -> bool:
         return False
 
 
-def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
+def resolve_case(doc, active_case_id: str | None = None,
+                 pdf_path=None) -> CaseRecord:
     """Merge every page of `doc` into a single CaseRecord.
 
     Per page: `pg.visible` is always parsed with source="text". If the page
@@ -439,7 +441,8 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
     corrections: dict[str, list] = {}
     trusted_texts: list = []
 
-    for pg in doc.pages:
+    anchor_page_indices: list = []
+    for page_index, pg in enumerate(doc.pages):
         if pg.image_only:
             has_image_only = True
             if _is_unreadable_ocr(pg.ocr):
@@ -463,6 +466,7 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
             if _is_foreign_page(ocr_parse, active_case_id):
                 foreign_pages += 1
             else:
+                anchor_page_indices.append(page_index)
                 trusted_texts.append(pg.ocr)
                 if ocr_parse.doc_type not in ("cover", "unknown"):
                     doc_types_seen.add(ocr_parse.doc_type)
@@ -485,6 +489,27 @@ def resolve_case(doc, active_case_id: str | None = None) -> CaseRecord:
     # unambiguous enough to take the most frequent one.
     for name, value in _pattern_sweep(trusted_texts, resolved_fields).items():
         resolved_fields[name] = value
+
+    # Anchor-crop re-OCR: for fields still unresolved, find their printed
+    # label on trusted image-only pages via word boxes and re-OCR tight
+    # value crops at high DPI. Crops render page pixels, so hidden text
+    # (white-on-white / alpha-0) is invisible by construction.
+    if pdf_path is not None and anchor_page_indices:
+        missing = [n for n in FIELD_NAMES
+                   if n != "case_id" and resolved_fields.get(n) is None]
+        want_flags = not all_fields.get("observed_flags")
+        wanted = missing + (["observed_flags"] if want_flags else [])
+        if wanted:
+            candidates = anchor_reocr(pdf_path, anchor_page_indices, wanted)
+            for name in missing:
+                for raw in candidates.get(name, []):
+                    snapped = _snap_field(name, raw)
+                    if snapped is not None:
+                        resolved_fields[name] = snapped
+                        break
+            for raw in candidates.get("observed_flags", []):
+                all_fields.setdefault("observed_flags", []).append(
+                    (raw, "anchor", "ocr"))
 
     conflicts = _detect_conflicts(all_fields)
     observed_flags = _resolve_observed_flags(all_fields.get("observed_flags", []))
