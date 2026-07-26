@@ -13,7 +13,14 @@ from pathlib import Path
 import fitz
 import pytest
 
-from mib.extract import DocText, PageText, extract_document
+from mib.extract import (
+    DocText,
+    OCR_MIN_CHARS,
+    PageText,
+    _needs_ocr_retry,
+    _non_whitespace_count,
+    extract_document,
+)
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "mib-doc-challenge" / "data" / "train"
 
@@ -117,6 +124,44 @@ def test_tiny_font_span_is_hidden(tmp_path):
     assert "tiny hidden marker" in page_text.hidden
 
 
+def test_invisible_render_mode_span_is_hidden_not_visible(tmp_path):
+    """PDF render mode `3 Tr` (invisible text, used e.g. by searchable-OCR
+    layers and - relevantly here - by prompt-injection attempts) makes
+    PyMuPDF report the span with alpha=0. Alpha-compositing that against a
+    white page background yields pure white regardless of the span's
+    nominal fill color, so it must land in `hidden`, not `visible`."""
+    pdf_path = tmp_path / "invisible.pdf"
+    doc = fitz.open()
+    page = doc.new_page(width=612, height=792)
+    page.insert_text((72, 100), "Visible Label: value one", fontsize=11, color=(0, 0, 0))
+    # render_mode=3 ("invisible") -> PyMuPDF reports this span's alpha as 0.
+    page.insert_text(
+        (72, 600),
+        "TR3 INVISIBLE INJECTION",
+        fontsize=11,
+        color=(0, 0, 0),
+        render_mode=3,
+    )
+    doc.save(pdf_path)
+
+    # Sanity-check the fixture actually produces an alpha=0 span before
+    # asserting anything about extract_document's behavior on it.
+    found_alpha = None
+    for block in page.get_text("dict").get("blocks", []):
+        for line in block.get("lines", []):
+            for span in line.get("spans", []):
+                if "TR3 INVISIBLE INJECTION" in span.get("text", ""):
+                    found_alpha = span.get("alpha")
+    doc.close()
+    assert found_alpha == 0
+
+    result = extract_document(pdf_path)
+    page_text = result.pages[0]
+    assert "TR3 INVISIBLE INJECTION" in page_text.hidden
+    assert "TR3 INVISIBLE INJECTION" not in page_text.visible
+    assert "Visible Label" in page_text.visible
+
+
 def test_image_only_page_triggers_ocr_field(tmp_path):
     pdf_path = tmp_path / "image_only.pdf"
     _make_blank_image_pdf(pdf_path)
@@ -140,6 +185,34 @@ def test_corrupt_pdf_raises(tmp_path):
     bad_path.write_bytes(b"not a real pdf")
     with pytest.raises(Exception):
         extract_document(bad_path)
+
+
+def test_non_whitespace_count_ignores_whitespace():
+    assert _non_whitespace_count("a b\nc\t d") == 4
+    assert _non_whitespace_count("   \n\t  ") == 0
+    assert _non_whitespace_count("") == 0
+
+
+def test_needs_ocr_retry_counts_non_whitespace_not_stripped_length():
+    # 40 real ("a") characters interspersed with single spaces: the old,
+    # wrong check (len(text.strip()) < OCR_MIN_CHARS) counts the interior
+    # whitespace too, so len(text.strip()) == 79 >= 50 and it would
+    # (wrongly) skip the retry. The spec counts only non-whitespace chars:
+    # 40 < OCR_MIN_CHARS, so a retry is still needed.
+    text = " ".join(["a"] * 40)
+    assert len(text.strip()) >= OCR_MIN_CHARS
+    assert _non_whitespace_count(text) == 40
+    assert _needs_ocr_retry(text) is True
+
+
+def test_needs_ocr_retry_false_at_exactly_min_chars():
+    text = "a" * OCR_MIN_CHARS
+    assert _needs_ocr_retry(text) is False
+
+
+def test_needs_ocr_retry_true_below_min_chars():
+    text = "a" * (OCR_MIN_CHARS - 1)
+    assert _needs_ocr_retry(text) is True
 
 
 def test_extract_document_closes_document(tmp_path, monkeypatch):

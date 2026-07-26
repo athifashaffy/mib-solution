@@ -53,20 +53,32 @@ class DocText:
     pages: list[PageText] = field(default_factory=list)
 
 
-def _luminance(color_int: int) -> float:
-    """Perceptual luminance of a packed 0xRRGGBB integer color, per
-    PyMuPDF's span["color"] convention (0 - 16777215)."""
+def _composited_luminance(color_int: int, alpha: int) -> float:
+    """Perceptual luminance of a packed 0xRRGGBB color after alpha-
+    compositing it against an opaque white page background.
+
+    PyMuPDF reports span["alpha"] in [0, 255] (0 == fully transparent, e.g.
+    text drawn with the invisible PDF render mode `3 Tr`). Fully transparent
+    text renders as pure white regardless of its nominal color, so it must
+    be treated as hidden the same as literal white text.
+    """
     r = (color_int >> 16) & 0xFF
     g = (color_int >> 8) & 0xFF
     b = color_int & 0xFF
-    return 0.299 * r + 0.587 * g + 0.114 * b
+    factor = alpha / 255.0
+    cr = factor * r + (1 - factor) * 255
+    cg = factor * g + (1 - factor) * 255
+    cb = factor * b + (1 - factor) * 255
+    return 0.299 * cr + 0.587 * cg + 0.114 * cb
 
 
 def _is_span_hidden(span: dict, page_rect: "fitz.Rect") -> bool:
-    """A span is hidden iff its color is near-white, its font is too small
-    to read, or its bbox lies fully outside the page cropbox."""
+    """A span is hidden iff its alpha-composited (against a white page
+    background) color is near-white, its font is too small to read, or its
+    bbox lies fully outside the page cropbox."""
     color = span.get("color", 0)
-    if _luminance(color) > LUMINANCE_HIDDEN_THRESHOLD:
+    alpha = span.get("alpha", 255)
+    if _composited_luminance(color, alpha) > LUMINANCE_HIDDEN_THRESHOLD:
         return True
 
     size = span.get("size", 0)
@@ -123,6 +135,18 @@ def _split_page_spans(page: "fitz.Page") -> tuple[str, str]:
     return "\n".join(visible_lines), "\n".join(hidden_lines)
 
 
+def _non_whitespace_count(text: str) -> int:
+    """Count of non-whitespace characters in text."""
+    return sum(1 for c in text if not c.isspace())
+
+
+def _needs_ocr_retry(text: str) -> bool:
+    """True iff the first-pass OCR text has fewer than OCR_MIN_CHARS
+    non-whitespace characters, warranting a retry with a different
+    tesseract page-segmentation mode."""
+    return _non_whitespace_count(text) < OCR_MIN_CHARS
+
+
 def _run_tesseract(png_path: str, psm: str) -> str:
     try:
         result = subprocess.run(
@@ -154,7 +178,7 @@ def _ocr_page(page: "fitz.Page") -> str:
     try:
         pix.save(png_path)
         text = _run_tesseract(png_path, "6")
-        if len(text.strip()) < OCR_MIN_CHARS:
+        if _needs_ocr_retry(text):
             retry_text = _run_tesseract(png_path, "3")
             if len(retry_text) > len(text):
                 text = retry_text
