@@ -108,7 +108,9 @@ def test_build_row_fallback_placeholders():
     assert row["sponsor_id"] == "SPN-0000"
     assert row["arrival_date"] == "1900-01-01"
     assert row["risk_flags"] == "none"
-    assert row["fee_status"] == "unknown"
+    # Missing fee fills with the calibrated training-set prior "paid",
+    # not the "unknown" placeholder (see FALLBACK_ROW comment in output.py).
+    assert row["fee_status"] == "paid"
     assert row["adjudication"] == "NEEDS_REVIEW"
     assert row["confidence"] == 0.3
     assert row["case_id"] == "MIB-000001"
@@ -151,7 +153,7 @@ def test_fallback_row_constants():
     assert FALLBACK_ROW["sponsor_id"] == "SPN-0000"
     assert FALLBACK_ROW["arrival_date"] == "1900-01-01"
     assert FALLBACK_ROW["risk_flags"] == "none"
-    assert FALLBACK_ROW["fee_status"] == "unknown"
+    assert FALLBACK_ROW["fee_status"] == "paid"
 
 
 def test_write_jsonl_writes_one_json_object_per_line(tmp_path):

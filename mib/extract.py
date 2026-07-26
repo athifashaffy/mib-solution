@@ -226,11 +226,69 @@ _RETRY_GOALS = (
 )
 
 
+# Words that appear on essentially every legible packet page. If an OCR
+# result contains fewer than _GARBAGE_MIN_ANCHORS of them, the page likely
+# failed OCR structurally (e.g. it is rotated) rather than being noisy.
+_ANCHOR_WORDS = ("packet", "case", "applicant", "species", "sponsor", "fee",
+                 "registry", "finding", "mib", "synthetic")
+_GARBAGE_MIN_ANCHORS = 2
+
+
+def _anchor_count(text: str) -> int:
+    t = text.casefold()
+    return sum(1 for w in _ANCHOR_WORDS if w in t)
+
+
+def _detect_rotation(page: "fitz.Page") -> int:
+    """Tesseract OSD (--psm 0) rotation estimate in degrees, or 0."""
+    try:
+        pix = page.get_pixmap(dpi=200, colorspace=fitz.csGRAY)
+    except Exception:
+        return 0
+    fd = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    png_path = fd.name
+    fd.close()
+    try:
+        pix.save(png_path)
+        result = subprocess.run(
+            ["tesseract", png_path, "stdout", "--psm", "0"],
+            capture_output=True, text=True, errors="replace",
+            timeout=OCR_TIMEOUT_SECONDS,
+        )
+        out = (result.stdout or "") + (result.stderr or "")
+    except (subprocess.TimeoutExpired, OSError):
+        return 0
+    finally:
+        Path(png_path).unlink(missing_ok=True)
+    for line in out.splitlines():
+        if "Rotate:" in line:
+            try:
+                return int(line.split(":", 1)[1].strip()) % 360
+            except ValueError:
+                return 0
+    return 0
+
+
 def _ocr_page(page: "fitz.Page") -> str:
-    """First-pass OCR at OCR_DPI, plus at most one targeted higher-DPI
-    retry when the page looks like a doc type whose key content didn't
-    survive the first pass (see _RETRY_GOALS)."""
+    """Two-pass OCR at OCR_DPI, plus at most one targeted higher-DPI retry
+    when the page looks like a doc type whose key content didn't survive
+    (see _RETRY_GOALS), plus an OSD-rotation rescue when the result looks
+    like structural garbage (rotated scans OCR to noise; re-rendering with
+    the OSD-estimated rotation recovers them)."""
     text = _ocr_at_dpi(page, OCR_DPI)
+
+    if _anchor_count(text) < _GARBAGE_MIN_ANCHORS:
+        rotation = _detect_rotation(page)
+        if rotation:
+            original = page.rotation
+            try:
+                page.set_rotation((original + rotation) % 360)
+                rotated_text = _ocr_at_dpi(page, OCR_DPI)
+            finally:
+                page.set_rotation(original)
+            if _anchor_count(rotated_text) > _anchor_count(text):
+                text = rotated_text
+
     for looks_like, recovered in _RETRY_GOALS:
         if looks_like(text) and not recovered(text):
             retry_text = _ocr_at_dpi(page, OCR_NOTE_RETRY_DPI)
