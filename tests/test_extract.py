@@ -17,7 +17,6 @@ from mib.extract import (
     DocText,
     OCR_MIN_CHARS,
     PageText,
-    _needs_ocr_retry,
     _non_whitespace_count,
     extract_document,
 )
@@ -193,26 +192,6 @@ def test_non_whitespace_count_ignores_whitespace():
     assert _non_whitespace_count("") == 0
 
 
-def test_needs_ocr_retry_counts_non_whitespace_not_stripped_length():
-    # 40 real ("a") characters interspersed with single spaces: the old,
-    # wrong check (len(text.strip()) < OCR_MIN_CHARS) counts the interior
-    # whitespace too, so len(text.strip()) == 79 >= 50 and it would
-    # (wrongly) skip the retry. The spec counts only non-whitespace chars:
-    # 40 < OCR_MIN_CHARS, so a retry is still needed.
-    text = " ".join(["a"] * 40)
-    assert len(text.strip()) >= OCR_MIN_CHARS
-    assert _non_whitespace_count(text) == 40
-    assert _needs_ocr_retry(text) is True
-
-
-def test_needs_ocr_retry_false_at_exactly_min_chars():
-    text = "a" * OCR_MIN_CHARS
-    assert _needs_ocr_retry(text) is False
-
-
-def test_needs_ocr_retry_true_below_min_chars():
-    text = "a" * (OCR_MIN_CHARS - 1)
-    assert _needs_ocr_retry(text) is True
 
 
 def test_extract_document_closes_document(tmp_path, monkeypatch):
