@@ -13,4 +13,5 @@ COPY mib/ /app/mib/
 COPY run.sh /app/run.sh
 RUN chmod +x /app/run.sh
 
+ENV OMP_THREAD_LIMIT=1
 ENTRYPOINT ["/app/run.sh"]
