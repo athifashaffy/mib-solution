@@ -1,0 +1,326 @@
+"""Per-page doc-type detection and field/evidence parsing.
+
+Each PDF page's text (already separated into visible/hidden/OCR buckets by
+`mib.extract`) is parsed independently by `parse_page(text, source)`. This
+module never looks at hidden text or decides precedence across pages -- it
+just recognizes, on a single page's text, which document type the page is
+and what raw field values it carries as `Evidence` tuples. Cross-page
+precedence, snapping against the closed vocabularies, and conflict
+detection are Task 5's job (`mib.resolve`); this module hands it raw
+material.
+
+Two on-page layouts are handled:
+  - Text-layer forms (intake/fee/registry) put a field's label and its
+    value on separate, consecutive lines with no separator, e.g.
+    "Case ID\\nMIB-000912".
+  - Biometric slips and OCR'd (tesseract) pages put label and value on the
+    same line separated by a colon (or an OCR-mangled "|"), e.g.
+    "Case ID: MIB-000912". OCR also mangles individual label characters
+    (0/O, 1/l confusion), which label matching tolerates; VALUES are never
+    "corrected" here -- they're captured raw and cleaned up in resolve().
+
+Adjudicator verdicts are adversarial territory: a note page shows the
+verdict as a bare word ("DENIED") *and* as a sentence ("Finding: DENIED.
+Reason: ..."), and other pages carry decoy strings ("SAMPLE DENIAL",
+"COPY ARTIFACT", "CASEWORK") that look like verdict evidence but are not.
+Only the "Finding:" sentence is ever trusted for `note_verdict`/
+`note_reason`.
+"""
+import re
+from dataclasses import dataclass, field
+
+# (value_raw, doc_type, source) -- doc_type is the page's own doc type
+# (used by resolve.py for cross-doc-type precedence); source is whichever
+# text bucket the caller extracted this text from ("text" or "ocr").
+Evidence = tuple[str, str, str]
+
+
+@dataclass
+class PageParse:
+    doc_type: str
+    fields: dict = field(default_factory=dict)
+    corrections: dict = field(default_factory=dict)
+
+
+# --- doc-type detection -------------------------------------------------
+
+# Checked in this order against the lower-cased first few lines of page
+# text; first match wins. Order doesn't matter for correctness here since
+# the phrases are mutually exclusive in practice, but is kept stable.
+_DOC_TYPE_KEYWORDS = [
+    ("form i-8090", "intake"),
+    ("mib fee receipt", "fee"),
+    ("biometric scan slip", "biometric"),
+    ("form b-13", "biometric"),
+    ("sponsor attestation", "sponsor"),
+    ("planetary registry extract", "registry"),
+    ("manual adjudicator note", "note"),
+]
+
+# Doc-type header keywords only need to be recognized near the top of the
+# page; scanning the whole page risks false positives from later prose.
+_HEADER_SCAN_LINES = 5
+
+# Boilerplate that appears on essentially every page regardless of doc
+# type: the packet/page footer, the "Synthetic hiring challenge document"
+# marker, and the "<CASE-ID> | MIB Eyes Only" header line. A page whose
+# every non-blank line is one of these (no header keyword, no fields) is a
+# blank filler/cover page rather than a genuinely unrecognizable one.
+_BOILERPLATE_LINE_RE = re.compile(
+    r"(?i)^("
+    r"packet\s+mib-\d+\s*/\s*page\s+\d+"
+    r"|synthetic hiring challenge document\.?"
+    r"|mib-\d+\s*\|\s*mib eyes only"
+    r")$"
+)
+
+
+def _detect_doc_type(lines: list[str]) -> str:
+    header = "\n".join(lines[:_HEADER_SCAN_LINES]).lower()
+    for needle, doc_type in _DOC_TYPE_KEYWORDS:
+        if needle in header:
+            return doc_type
+    for line in lines:
+        stripped = line.strip()
+        if stripped and not _BOILERPLATE_LINE_RE.match(stripped):
+            return "unknown"
+    return "cover"
+
+
+# --- value cleanup -------------------------------------------------------
+
+# Values this long are presumed to be OCR garbage/prose bleed rather than a
+# genuine short field value (case IDs, names, codes, dates all fit well
+# under this). Fields that are legitimately long free text (observed_flags
+# comma-lists, note_reason sentences) opt out via long_ok=True.
+_MAX_VALUE_LENGTH = 40
+
+# Damage markers meaning "the underlying value is unreadable/absent" often
+# survive OCR as (or get misread into) these substrings regardless of the
+# original bracketed marker text (e.g. "[VISA CLASS TORN]", or OCR noise
+# that reads a damaged region as "REDACTED?"). A captured value containing
+# either -- case-insensitively -- is treated as not captured at all.
+_DAMAGE_SUBSTRINGS = ("redacted", "torn")
+
+
+def _clean_value(raw, *, long_ok: bool = False) -> str | None:
+    """Raw-capture cleanup: strip incidental whitespace/pipe artifacts,
+    then drop obvious non-values (empty, too long, or a damage marker).
+    Anything else is returned untouched -- no case-folding, no vocabulary
+    snapping; that's resolve()'s job."""
+    if not raw:
+        return None
+    value = raw.strip().strip("|").strip()
+    if not value:
+        return None
+    if not long_ok and len(value) >= _MAX_VALUE_LENGTH:
+        return None
+    lowered = value.lower()
+    if any(marker in lowered for marker in _DAMAGE_SUBSTRINGS):
+        return None
+    return value
+
+
+# --- label/value field parsing -------------------------------------------
+
+# label text -> (field name, whether long values are acceptable for it).
+# "Applicant" (intake/biometric) and "Registry Name" (registry extract) are
+# different labels for the same field: the identity of the person the page
+# is about.
+_LABELS = [
+    ("case id", "case_id", False),
+    ("applicant", "applicant_name", False),
+    ("species code", "species_code", False),
+    ("species match", "species_code", False),
+    ("home world", "home_world", False),
+    ("visa class", "visa_class", False),
+    ("sponsor id", "sponsor_id", False),
+    ("arrival date", "arrival_date", False),
+    ("declared purpose", "declared_purpose", False),
+    ("fee status", "fee_status", False),
+    ("waiver code", "waiver_code", False),
+    ("registry name", "applicant_name", False),
+    ("registry status", "registry_status", False),
+    ("observed flags", "observed_flags", True),
+]
+
+
+def _fuzzy_label_fragment(label: str) -> str:
+    """Build a regex fragment for `label` that tolerates the OCR digit/
+    letter confusions this dataset exhibits in label text (e.g. "Sp0nsor
+    ID" for "Sponsor ID"). Only the label is fuzzed -- captured values are
+    never altered."""
+    parts = []
+    for ch in label:
+        if ch == " ":
+            parts.append(r"\s+")
+        elif ch == "o":
+            parts.append("[oO0]")
+        elif ch == "l":
+            parts.append("[lI1]")
+        else:
+            parts.append(re.escape(ch))
+    return "".join(parts)
+
+
+def _compile_labels():
+    compiled = []
+    for label, field_name, long_ok in _LABELS:
+        frag = _fuzzy_label_fragment(label)
+        same_line = re.compile(rf"(?i)^\s*\|?\s*{frag}\s*[:|]\s*(\S.*)$")
+        alone = re.compile(rf"(?i)^\s*\|?\s*{frag}\s*[:|]?\s*$")
+        compiled.append((same_line, alone, field_name, long_ok))
+    return compiled
+
+
+_COMPILED_LABELS = _compile_labels()
+
+
+def _parse_labeled_fields(lines: list[str], add) -> None:
+    stripped = [ln.strip() for ln in lines]
+    n = len(stripped)
+    for i, line in enumerate(stripped):
+        if not line:
+            continue
+        for same_line_re, alone_re, field_name, long_ok in _COMPILED_LABELS:
+            m = same_line_re.match(line)
+            if m:
+                add(field_name, m.group(1), long_ok=long_ok)
+                break
+            if alone_re.match(line):
+                j = i + 1
+                while j < n and not stripped[j]:
+                    j += 1
+                if j < n:
+                    add(field_name, stripped[j], long_ok=long_ok)
+                break
+
+
+# --- free-text (prose) parsing -------------------------------------------
+
+# Word-wrapped prose (the adjudicator note's "Reason:" sentence, the
+# sponsor attestation letter's body) can break a sentence across lines,
+# occasionally mid-word with a hyphen. Flattening dehyphenates first, then
+# collapses all remaining whitespace (including newlines) to single spaces
+# so the prose regexes below can match regardless of how the page wrapped.
+def _flatten(text: str) -> str:
+    flat = text.replace("-\n", "")
+    flat = re.sub(r"\s+", " ", flat)
+    return flat.strip()
+
+
+# Only ever trust the "Finding: <verdict>. Reason: <reason>." sentence for
+# adjudication evidence. Note pages also print the verdict as a bare word
+# above the Finding line, and unrelated pages carry decoy strings like
+# "SAMPLE DENIAL" / "COPY ARTIFACT" / "CASEWORK" -- none of that is
+# matched here on purpose.
+_FINDING_RE = re.compile(
+    r"(?i)Finding:\s*([A-Za-z_ ]+?)[.,]\s*Reason:\s*(.+?)"
+    r"(?=\s+Packet\s+MIB-|\s+Synthetic\s+hiring|$)"
+)
+
+
+def _normalize_verdict(raw: str) -> str | None:
+    value = raw.strip().strip(".,").strip()
+    if not value:
+        return None
+    value = re.sub(r"\s+", "_", value)
+    return value.upper()
+
+
+def _parse_finding(flat: str, add) -> None:
+    m = _FINDING_RE.search(flat)
+    if not m:
+        return
+    verdict = _normalize_verdict(m.group(1))
+    if verdict:
+        add("note_verdict", verdict, long_ok=False)
+    reason = m.group(2).strip()
+    if reason:
+        add("note_reason", reason, long_ok=True)
+
+
+# Sponsor attestation body, e.g.:
+#   "Sponsor SPN-4974 attests that Aririx Arizarn is expected on Earth for
+#   cultural exchange. The sponsor acknowledges responsibility for class
+#   XW-1 compliance and immediate reporting duties."
+_ATTEST_SPONSOR_NAME_RE = re.compile(
+    r"(?i)Sponsor\s+(\S+)\s+attests that\s+(.+?)\s+is expected on Earth for"
+)
+_ATTEST_VISA_RE = re.compile(r"(?i)\bclass\s+(.+?)\s+compliance")
+
+
+def _parse_attestation(flat: str, add) -> None:
+    m = _ATTEST_SPONSOR_NAME_RE.search(flat)
+    if m:
+        add("attest_sponsor", m.group(1), long_ok=False)
+        add("attest_name", m.group(2), long_ok=False)
+    m = _ATTEST_VISA_RE.search(flat)
+    if m:
+        add("attest_visa", m.group(1), long_ok=False)
+
+
+# Manual correction lines, e.g. "Manual correction: sponsor is SPN-2191."
+_CORRECTION_RE = re.compile(
+    r"(?i)Manual correction:\s*([a-zA-Z ]+?)\s+is\s+(.+?)\.(?:\s|$)"
+)
+
+_CORRECTION_WHAT_MAP = {
+    "sponsor": "sponsor_id",
+    "visa class": "visa_class",
+    "species": "species_code",
+    "home world": "home_world",
+    "arrival date": "arrival_date",
+    "applicant": "applicant_name",
+    "purpose": "declared_purpose",
+    "declared purpose": "declared_purpose",
+    "fee": "fee_status",
+    "fee status": "fee_status",
+}
+
+
+def _parse_corrections(flat: str) -> dict:
+    corrections: dict[str, str] = {}
+    for m in _CORRECTION_RE.finditer(flat):
+        what = m.group(1).strip().lower()
+        field_name = _CORRECTION_WHAT_MAP.get(what)
+        if field_name is None:
+            # Unrecognized "<what>" -- ignore rather than guess.
+            continue
+        value = _clean_value(m.group(2), long_ok=False)
+        if value is None:
+            continue
+        corrections[field_name] = value
+    return corrections
+
+
+# --- entry point -----------------------------------------------------------
+
+
+def parse_page(text: str, source: str) -> PageParse:
+    """Parse one page's text into a doc type, field evidence, and any
+    manual corrections found on the page.
+
+    `source` is caller-supplied provenance ("text" or "ocr") and is stored
+    verbatim in every Evidence tuple produced from this call; parse_page
+    does not itself decide which text bucket to prefer.
+    """
+    text = text or ""
+    lines = text.split("\n")
+    doc_type = _detect_doc_type(lines)
+    fields: dict[str, list[Evidence]] = {}
+
+    def add(field_name: str, raw: str, *, long_ok: bool = False) -> None:
+        cleaned = _clean_value(raw, long_ok=long_ok)
+        if cleaned is None:
+            return
+        fields.setdefault(field_name, []).append((cleaned, doc_type, source))
+
+    _parse_labeled_fields(lines, add)
+
+    flat = _flatten(text)
+    _parse_finding(flat, add)
+    _parse_attestation(flat, add)
+    corrections = _parse_corrections(flat)
+
+    return PageParse(doc_type=doc_type, fields=fields, corrections=corrections)
